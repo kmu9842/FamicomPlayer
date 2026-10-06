@@ -1,0 +1,15 @@
+<UserControl x:Class="FamicomPlayer.CartridgeDisplay" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" IsHitTestVisible="False" UseLayoutRounding="False">
+    <Border CornerRadius="4" Padding="2" BorderThickness=".8">
+        <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#14171B"/><GradientStop Color="#343A42" Offset="1"/></LinearGradientBrush></Border.Background>
+        <Border.BorderBrush><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#59606B"/><GradientStop Color="#A6AFBB" Offset="1"/></LinearGradientBrush></Border.BorderBrush>
+        <Grid>
+            <Grid x:Name="Glass" Background="#101418" ClipToBounds="True">
+                <Image x:Name="Picture" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Grid>
+            <Border CornerRadius="2" BorderBrush="#B8000000" BorderThickness="1,1.8,1,.6" IsHitTestVisible="False"/>
+            <Border CornerRadius="2" IsHitTestVisible="False">
+                <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="1,1"><GradientStop Color="#10F2F2F2"/><GradientStop Color="#03F2F2F2" Offset=".35"/><GradientStop Color="Transparent" Offset=".4"/><GradientStop Color="#05000000" Offset="1"/></LinearGradientBrush></Border.Background>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

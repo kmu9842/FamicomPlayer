@@ -1,0 +1,46 @@
+{
+  "provider": "Forge MCP",
+  "model": "gpt_image_25_sunburst",
+  "visibility": "private",
+  "generation_job": "atj_8f7aeff9b5d6b1d865ddb14ccab34593b70b13471db719d9",
+  "prompts": [
+    "Create a production-ready photorealistic 3D product sprite for a nostalgic Windows desktop widget. Warm ivory, oxblood red and aged olive materials, tiny realistic scuffs, subtle studio lighting from upper left, sharp readable physical details. Isolated on an actual transparent alpha background, with no floor, room, surrounding objects, backdrop, checkerboard pattern or cast shadow outside the object. Landscape composition of three connected devices, fully visible with generous empty margins. An authentic cream and dark-red 1983 Japanese Famicom console on the left, an old compact olive-grey 1980s CRT television on the right, and ONE matching red and gold rectangular Famicom controller lying naturally at the bottom center between them, connected with thin curved black cables. The console is turned slightly toward the TV, showing its top and right side. Its top cartridge slot is EMPTY: a dark slit clearly visible at top center; DO NOT insert a cartridge (it will be animated separately). The TV is turned very slightly toward the console, showing its left side, but its front screen remains nearly frontal and is a large rectangular 4:3 dark blank green-black glass display with rounded corners and completely unobstructed interior. The screen is entirely blank and clean to overlay real video. On the right of the glass are two tuning knobs and speaker grille. Keep tilt very subtle, screen edges close to horizontal. Console occupies x=5%-42%, y=40%-78%; TV occupies x=47%-95%, y=10%-78%; controller occupies x=33%-62%, y=79%-93%. Controller has one black cross-shaped D-pad on left, black SELECT and START buttons in center and two red round B/A buttons on right. No UI, no interface panels, no extra text around devices.",
+    "Create a production-ready photorealistic 3D product sprite for a nostalgic Windows desktop widget. Warm ivory, oxblood red and aged olive materials, tiny realistic scuffs, subtle studio lighting from upper left, sharp readable physical details. Isolated on an actual transparent alpha background, with no floor, room, surrounding objects, backdrop, checkerboard pattern or cast shadow outside the object. A single dark charcoal plastic Famicom game cartridge, upright and straight-on front view, rectangular broad 1.3:1 body, tiny beveled edge visible on right, top ribbing and lower contact edge. Centered filling 85 percent of square canvas. Large blank recessed label occupying most of the front, flat muted dark green with absolutely no text or illustration. This label will contain a programmable LED thumbnail. Rounded plastic top corners, precisely rectangular label, realistic weathered black plastic. No console, no controller, no TV.",
+    "Create a 4:3 illustrated cover label for a nostalgic Famicom music cartridge: a quiet Japanese coastal town at blue hour in 1987, a tiny ivory and red game console in the window of an empty record shop, warm amber light, distant indigo mountains, one star, subtle screen-printed paper grain, muted sage green, apricot and navy colors. Refined Japanese vintage packaging illustration, balanced composition, no text, no logos, no border. Full bleed opaque image."
+  ],
+  "outputs": [
+    {
+      "id": "ata_22f9895867775ca64cb30efcf28aeea7c6fe67c41ada0d19",
+      "visibility": "private"
+    },
+    {
+      "id": "ata_91ccbe9917bd1ebeb54ca61d84f53a2bcac67b55d252b3aa",
+      "visibility": "private"
+    },
+    {
+      "id": "ata_a7a3116fabe32fe417b1efa96c566f8937c01c0432cd3b02",
+      "visibility": "private"
+    }
+  ],
+  "chroma_jobs": [
+    {
+      "job_id": "atj_361bee14728fa0789e27c24f9c4c690d5d4f7c040bf63778",
+      "outputs": [
+        {
+          "id": "ata_03c4b64407b6df1debcf038fa2589c3a42ccc365c01cc6d5",
+          "visibility": "private"
+        }
+      ]
+    },
+    {
+      "job_id": "atj_823361adffff42528efd84587de972c1194d2c7a5522e6aa",
+      "outputs": [
+        {
+          "id": "ata_f25744b3d3f900f7ae372d77d410740041a023f67f66cc95",
+          "visibility": "private"
+        }
+      ]
+    }
+  ],
+  "note": "Forge generated and edited all raster artwork privately. Runtime color-key compositing removes the magenta sprite background. Signed URLs are not stored."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "famicom-player",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Famicom and CRT desktop YouTube widget, WPF + WebView2",
+  "scripts": {
+    "start": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/start-native.ps1",
+    "test": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File build.ps1 -Test",
+    "test:desktop": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-native.ps1",
+    "test:bridge": "node --test test/playback-bridge.test.mjs test/chrome-extension.test.mjs",
+    "dist": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File publish.ps1",
+    "dist:chrome": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/package-chrome.ps1 -Test"
+  }
+}

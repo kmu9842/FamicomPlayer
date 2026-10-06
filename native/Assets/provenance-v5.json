@@ -1,0 +1,61 @@
+{
+  "version": 5,
+  "date": "2026-10-07",
+  "provider": "Forge",
+  "visibility": "private",
+  "assets": [
+    {
+      "file": "console-assembled-v5.png",
+      "job_id": "atj_fca4fdbbfe386839d274914fd9f1daba1c81218f316ebd34",
+      "asset_id": "ata_5965b81a991f009fcc19575160e0c8f5de03c031cd8163da",
+      "visibility": "private",
+      "input_asset_ids": [
+        "ata_2ce59b72f20da25de2b9ad9836c03a8def97fe91124af655",
+        "ata_cdb61f5a70f92f1b2c24255130ab58d616a3f27f8387e950",
+        "ata_af81075749f8f711b7eff352eec3b9c95fd1027240b647e5"
+      ],
+      "prompt": "Edit the Famicom in image 1 into a nearly frontal product sprite, facing just 10 degrees toward the viewer's right (a very narrow left side visible), viewed gently from above so its slot and three controls remain visible. Insert the graphite game cartridge from image 3 vertically and naturally in the rear top slot, firmly seated and square to the console; its wide blank inset label faces forward. Preserve the console design, the three physical previous-track, central eject/play-pause and next-track controls, with their small clean symbol stickers adhered to the plastic. Match BOTH the light gray plastic and charcoal plastic EXACTLY to the controller in image 2: same neutral hue, same diffuse albedo, same smooth satin finish, same soft frontal studio lighting. The controller is a color reference only, output only the assembled console and cartridge. Render crisp precise manufactured surfaces, pristine evenly shaded plastic without mottling, grain, speckle or weathering. Isolated over perfectly flat solid RGB255,0,255 background, no floor or shadows outside the object. Entire console at x=45..765, y=400..810 on the original 1536x1024 canvas, upright cartridge rising above it. Horizontal front edge and cartridge label nearly horizontal, zero camera roll, restrained perspective, orthographic long-lens appearance. Keep all exterior magenta flat."
+    },
+    {
+      "file": "tv-v5.png",
+      "job_id": "atj_cb301ae0487cdaa112076e1b5340a891ad8334c9b6646f6d",
+      "asset_id": "ata_e3914539452c2912e559733de3c2edf80d12188c59e82fd6",
+      "visibility": "private",
+      "input_asset_ids": [
+        "ata_dbb04a39abbe8b9a83994176bb1feb48afb6271be6e0ede7"
+      ],
+      "prompt": "Edit this clean charcoal vintage CRT TV product sprite. Change the view to nearly straight-on, facing just 10 degrees toward the viewer's left, so only a very narrow RIGHT side is visible. Zero camera roll, vertical cabinet edges, screen top and bottom almost horizontal with a tiny downward slope toward the right. Increase the CRT glass opening relative to the cabinet by about 9 percent in each dimension: a much broader 4:3 screen dominates the front, thin neat bezel, narrower right control column. Keep two right-side circular controls and speaker, keep lower volume control's empty circular hub with its surrounding OFF-to-maximum tick ring (the turning knob is a separate software sprite). Upper channel knob remains present. Preserve light gray metallic trim and dark NEUTRAL charcoal case. Smooth precisely machined and molded pristine surfaces, soft even frontal studio light, no mottled texture, grime, grain, blotches or age stains. Render one complete TV centered at x=735..1495 and y=100..775 of the original 1536x1024 canvas; roughly same outer bounding rectangle. Glass is dark black-gray with a restrained soft reflection. Flat solid RGB255,0,255 exterior background, no floor/shadows outside the object, all hardware edges entirely inside canvas. Tight subtle perspective, orthographic long-lens look."
+    },
+    {
+      "file": "console-v5.png",
+      "job_id": "atj_47296c283baadcf36d342bd757281b162348a5e9ea19dbf1",
+      "asset_id": "ata_6a3166072b5c52e6ef9c75f2db3ac5bbe7ca103a2d585cd3",
+      "visibility": "private",
+      "input_asset_ids": [
+        "ata_5965b81a991f009fcc19575160e0c8f5de03c031cd8163da"
+      ],
+      "prompt": "Remove ONLY the inserted cartridge from this image, revealing its empty dark slot underneath. Preserve the console body, all three controls, symbol stickers, surface colors, studio lighting, silhouette and EVERY existing pixel coordinate of the console EXACTLY. The result must perfectly register with this reference as a sprite layer. Keep the same 1536x1024 canvas; console stays x410..1125 and y358..826. Where the cartridge was above the console, fill with flat solid RGB255,0,255 magenta. Keep the original console surface at the back of its slot and the slot as a natural empty dark recessed cavity. Same pristine neutral light gray and charcoal product finish. Output only the same console with an empty slot. No changes to perspective, zoom, placement or color."
+    },
+    {
+      "file": "cartridge-v5.png",
+      "job_id": "atj_185645e6f8385da18e099c212449999919781b215a5f45f1",
+      "asset_id": "ata_e49513ef4fc2885998b3f29dfdc97800491ef19267142d32",
+      "visibility": "private",
+      "input_asset_ids": [
+        "ata_5965b81a991f009fcc19575160e0c8f5de03c031cd8163da"
+      ],
+      "prompt": "Extract ONLY the graphite game cartridge as an isolated product sprite on this exact 1536x1024 canvas. Preserve the cartridge EXACTLY at x543..988, top y253: keep every visible cartridge pixel, its thin silver top edge, blank inset label at x581..950 y296..446, grooves, same size, same straight-on viewpoint and clean gray finish. Remove the entire console and all controls, replace their pixels with perfectly solid RGB255,0,255 magenta. Naturally extend the cartridge bottom straight downward about 28 pixels beyond its currently visible bottom y467 to complete the connector neck that was hidden inside the slot; bottom at y495. Do not move, rescale or rotate the cartridge. Smooth, pristine, grain-free plastic, original soft studio light. No shadows outside object."
+    },
+    {
+      "file": "pad-v5.png",
+      "job_id": "atj_fd173818912f08b1629aeaffa41ddba6c72433127257d5ff",
+      "asset_id": "ata_2b58e8a4161f3791c691803ba71d68f1c3264553b93dded0",
+      "visibility": "private",
+      "input_asset_ids": [
+        "ata_cdb61f5a70f92f1b2c24255130ab58d616a3f27f8387e950",
+        "ata_5965b81a991f009fcc19575160e0c8f5de03c031cd8163da"
+      ],
+      "prompt": "Edit ONLY the material colors of the controller in image 1. Match the light gray faceplate EXACTLY to the light neutral gray upper plastic of the console in image 2, and match the controller's dark shell and buttons EXACTLY to the charcoal gray console lower shell. They must look like the same set made from the exact same plastic batches, same soft frontal studio lighting and smooth satin manufactured finish. Preserve every shape, pixel position, existing functional pictogram, +10/-10 marks, cable socket, and viewing angle of image 1. Clean flat evenly shaded materials without green or warm/yellow tint, mottling, grain, blotches or noise. Output only the controller from image 1 at precisely its original position/size on the exact 1536x1024 solid RGB255,0,255 canvas. Image 2 is only a precise palette and surface finish reference."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+native/bin/
+native/obj/
+release/
+artifacts/
+.tools/
+*.user
+native/Assets/Forge/
+native/Assets/hardware*.png
+native/Assets/cartridge.png
+native/Assets/cartridge-v2.png
+native/Assets/cartridge-v4.png
+native/Assets/console-v4.png
+native/Assets/pad-v4.png
+native/Assets/tv-v4.png
+native/Assets/default-cover.png
+native/Assets/library-shell-v2.png

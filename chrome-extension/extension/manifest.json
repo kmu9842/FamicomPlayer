@@ -1,0 +1,69 @@
+{
+  "manifest_version": 3,
+  "name": "FamicomPlayer로 재생",
+  "version": "1.0.0",
+  "description": "유튜브에서 우클릭해 FamicomPlayer로 재생합니다. 앱이 꺼져 있으면 함께 실행합니다.",
+  "minimum_chrome_version": "123",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6grCgRla9SOw8/2izyegvvCvtW5QTxM8y6sH1B0Djd8i6OQ+CNKkWPilGqJq3Be33LtjFVvFV/MHikQWnONnwG51Y1GaXCi43BvTdJRmJffyUeD5qpXX1nS06kwHnWcxsEN/oWsC4fbP46SZVayVAUyMijs6bk5NxGuJ3lTkSz14AwtwlmD5HNyUktu7nKuzuQBSLQfI+T0bl2EIHOL521PxIdP96QYqPm60bRtnPbg80tFb4hhSRkCIXk8tY5W68xXsukwLxh87uICiO7MD21m84OsMAWyai2clBiIQ4WpkDSa1jAP8nF8hPFeOcrZ91hX/C0sKprvIN2djSWbWcwIDAQAB",
+  "permissions": [
+    "contextMenus",
+    "nativeMessaging",
+    "notifications",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.mjs",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://music.youtube.com/*"
+      ],
+      "js": [
+        "youtube-menu.js"
+      ],
+      "css": [
+        "youtube-menu.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/32.png"
+      ],
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://music.youtube.com/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "FamicomPlayer로 재생",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
+}

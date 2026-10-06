@@ -1,0 +1,44 @@
+{
+  "version": 2,
+  "provider": "Forge",
+  "visibility": "private",
+  "date": "2026-10-06",
+  "scene": {
+    "job_id": "atj_5aaa54597eef6a81eb00aecb6ecd54ce74c65597226bf1a5",
+    "asset_id": "ata_f2de347672e999bad4c284c419a1570876190b3402792e0f",
+    "visibility": "private",
+    "file": "Forge/v2-scene/forge-gpt-image-2-5-sunburst-1.png",
+    "prompt": "Redesign this desktop widget hardware scene correctly, keeping the same realistic aged ivory, oxblood-red, brass and olive materials, soft upper-left studio lighting, overall object positions, scale and saturated solid magenta RGB(255,0,255) background. The Famicom console on the LEFT must now face diagonally RIGHT toward the TV: rotate its yaw so its LEFT exterior side is visible and its RIGHT exterior side is hidden; its front badge and cartridge-slot edges should slope UP toward the right. The CRT on the RIGHT must face diagonally LEFT toward the console, with its RIGHT exterior side visible, as in the reference. The devices must form a subtle inward-facing V, absolutely not parallel. Keep both upright and physically plausible, no roll or tipping. Insert one authentic small warm-red Japanese Famicom game cartridge firmly and straight vertically into the console's cartridge slot, not leaning or floating. The cartridge is 108mm wide by 70mm tall relative to the console, with short round top corners, molded plastic grip details, and a large plain ivory rectangular recessed paper label on its front. Its lower contacts are fully hidden inside the slot, the slot lip correctly occludes its lower edge. Its vertical sides are straight upright; its top and label edges follow the console slot's same yaw perspective. Label has no text or image; real thumbnails will be composited there. Keep the CRT screen dark blank green-black and unobstructed, 4:3 glass with slight curvature. Use only TWO TV dials on its right side: upper channel dial and lower volume dial. Keep the red/gold wired controller in the bottom middle, near-front view and almost horizontal so labels will be readable. REMOVE all controller letter and text labels including A, B, SELECT, START and I, leaving blank gold metal around buttons; keep a black D-pad, two center black buttons and two right red buttons. Keep all devices fully in frame and connected by naturally curving cables. No additional slogan, floating words, decorative captions, stickers, extra UI, floor or room. Preserve the full 1536x1024 canvas and magenta background."
+  },
+  "assets": [
+    {
+      "file": "hardware-v2.png",
+      "job_id": "atj_046045836b2258427654c096460e5d9752dde4f440a86cb9",
+      "asset_id": "ata_b16fc5757760022112e51d50d29086223004f05e5819ff90",
+      "visibility": "private",
+      "prompt": "Remove ONLY the red game cartridge from the Famicom console, leaving its empty dark cartridge slot correctly reconstructed. Keep EVERYTHING ELSE pixel-aligned and unchanged, including the inward facing console and CRT angles, all cables, controller, lighting, shape, 1536x1024 canvas and exact flat saturated magenta background. Keep the controller metal face completely blank, no button lettering. Do not move, rescale, rotate or retouch the hardware."
+    },
+    {
+      "file": "cartridge-v2.png",
+      "job_id": "atj_eadd1f645f0ba5f15e43866228c5f4a8b4a54b13743970cc",
+      "asset_id": "ata_f78c4c24022af41bd46baa6ce4d616e7b37c908534b7cf70",
+      "visibility": "private",
+      "prompt": "Isolate ONLY the red Famicom game cartridge from this scene. Remove the console, TV, controller, cables and all other objects by replacing them with perfectly flat saturated magenta RGB(255,0,255). Keep the cartridge EXACTLY at its current pixel coordinates, size, perspective, upright vertical edges, label shape, lighting, surface and position on the original 1536x1024 canvas. Do NOT center, enlarge or rotate it. Reconstruct just 20 pixels of the lower hidden red cartridge plastic so it can slide into its slot; preserve the exact front face and blank ivory paper label. The only foreground must be this cartridge. No shadow on the magenta background."
+    },
+    {
+      "file": "library-shell-v2.png",
+      "job_id": "atj_1fde9b6a6ba5b20df8c3bd5dffa17000d30056052b628196",
+      "asset_id": "ata_60df21e5c2d5fe9d1c85c6528e05df7d0347924160e22aff",
+      "visibility": "private",
+      "prompt": "Replace only the entire dark red/black background and red glow outside the cartridge with a perfectly flat saturated magenta RGB(255,0,255) chroma-key background. Keep the cartridge itself, its exact size, position, dimensions, front view, red plastic, blank cream label and every foreground detail unchanged. No glow, no shading or gradient on the magenta, including all margins. Preserve the exact 1536x1024 canvas."
+    },
+    {
+      "file": "default-cover-v2.png",
+      "job_id": "atj_89d7312de19b3e941bff122b884ec6065bba19cc4ec8c881",
+      "asset_id": "ata_9b437770bce8282386e940b5c2afa3f5920f0cb924da3a63",
+      "visibility": "private",
+      "prompt": "Create a single authentic 1980s Japanese Famicom game cartridge PAPER LABEL ARTWORK, full bleed 16:9 landscape image. Refined hand-painted retro game box illustration of a tiny cream and red spaceship flying above an island coast at sunset, distant pixel-like stars and small geometric mountains, warm ivory paper, navy, muted teal and vermilion screen printing, clean large forms readable at thumbnail size. Artwork only, no cartridge body, no text, no lettering, no logo, no drop shadow, no border, no UI. Soft printed ink texture, crisp shapes, evenly lit."
+    }
+  ],
+  "notes": "Original private Forge PNGs downloaded with the authenticated privacy-verifying local helper. No signed URLs or credentials stored. Magenta key applied only during native UI composition."
+}

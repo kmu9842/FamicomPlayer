@@ -1,0 +1,57 @@
+{
+  "version": 4,
+  "date": "2026-10-06",
+  "provider": "Forge",
+  "visibility": "private",
+  "assets": [
+    {
+      "file": "console-v4.png",
+      "job_id": "atj_70bcae20fd4d050ce5da6d06e6a6299869bb204266725863",
+      "asset_id": "ata_2ce59b72f20da25de2b9ad9836c03a8def97fe91124af655",
+      "visibility": "private",
+      "source_asset_id": "ata_3a53ee3f773901c0eae658ec81fb61df3f87de300a9fd46d",
+      "prompt": "Make a precise material and color edit, preserving EVERY object silhouette, exact pixel coordinates, scale, viewpoint, perspective and lighting direction on this exact 1536x1024 canvas. Refinish all foreground surfaces as clean premium manufactured hardware with smooth light neutral gray and dark graphite gray plastic, satin dark gray metal and restrained silver edge highlights. Remove ALL yellow/cream/red/olive colors, stains, speckles, mottling, paint chips, grunge, scratches, paper grain and artificial image noise. Clean studio product rendering with smooth broad lighting, crisp molded details and natural controlled reflections. No gritty texture. Keep the outside background perfectly uniform saturated magenta RGB(255,0,255). Preserve the console's empty cartridge slot and all three symbol stickers EXACTLY in place. Make the three small control stickers light gray with dark charcoal previous/next/play-pause symbols; clean flat paper with a tiny natural edge, no stains. The body is light gray, base and controls dark charcoal. Keep the front Family Computer badge charcoal with silver lettering. Do not change geometry or add cables."
+    },
+    {
+      "file": "tv-v4.png",
+      "job_id": "atj_ccc0341809bb2ef2abdf7adffd97bd4574281eef5681897a",
+      "asset_id": "ata_dbb04a39abbe8b9a83994176bb1feb48afb6271be6e0ede7",
+      "visibility": "private",
+      "source_asset_id": "ata_b81a3b471bbd5bbe9507375be68290465fc417d2497a1051",
+      "prompt": "Make a precise material and color edit, preserving EVERY object silhouette, exact pixel coordinates, scale, viewpoint, perspective and lighting direction on this exact 1536x1024 canvas. Refinish all foreground surfaces as clean premium manufactured hardware with smooth light neutral gray and dark graphite gray plastic, satin dark gray metal and restrained silver edge highlights. Remove ALL yellow/cream/red/olive colors, stains, speckles, mottling, paint chips, grunge, scratches, paper grain and artificial image noise. Clean studio product rendering with smooth broad lighting, crisp molded details and natural controlled reflections. No gritty texture. Keep the outside background perfectly uniform saturated magenta RGB(255,0,255). The TV chassis is dark graphite with a subtle silver bezel and clean smooth charcoal glass. Preserve the upper dial and both printed dial scales. Remove ONLY the central rotating knob INSIDE the lower volume dial ring and replace it with a smooth dark circular recessed hub; keep that lower ring's exact size and center and its printed scale unchanged. The real rotating knob will be rendered separately over it. Do not change the TV screen shape or position."
+    },
+    {
+      "file": "pad-v4.png",
+      "job_id": "atj_ccfa65a5d33373d3f902f4091a364a99b8f95237877910c9",
+      "asset_id": "ata_cdb61f5a70f92f1b2c24255130ab58d616a3f27f8387e950",
+      "visibility": "private",
+      "source_asset_id": "ata_6f22c0b54252e77303d33634f6dc4cc4404f186cfe3deb69",
+      "prompt": "Make a precise material and color edit, preserving EVERY object silhouette, exact pixel coordinates, scale, viewpoint, perspective and lighting direction on this exact 1536x1024 canvas. Refinish all foreground surfaces as clean premium manufactured hardware with smooth light neutral gray and dark graphite gray plastic, satin dark gray metal and restrained silver edge highlights. Remove ALL yellow/cream/red/olive colors, stains, speckles, mottling, paint chips, grunge, scratches, paper grain and artificial image noise. Clean studio product rendering with smooth broad lighting, crisp molded details and natural controlled reflections. No gritty texture. Keep the outside background perfectly uniform saturated magenta RGB(255,0,255). Controller body dark charcoal, face plate satin light gray, D-pad dark graphite, two right buttons medium dark gray. Keep all existing small functional pictograms and +10/-10 marks sharply screen-printed in dark gray on the light plate, and light gray on the dark D-pad. Do not move or redraw the symbols. No added text."
+    },
+    {
+      "file": "cartridge-v4.png",
+      "job_id": "atj_1d978deb6fb573db1df5afe50f17213ad72a56ba91d0bcd1",
+      "asset_id": "ata_af81075749f8f711b7eff352eec3b9c95fd1027240b647e5",
+      "visibility": "private",
+      "source_asset_id": "ata_f78c4c24022af41bd46baa6ce4d616e7b37c908534b7cf70",
+      "prompt": "Make a precise material and color edit, preserving EVERY object silhouette, exact pixel coordinates, scale, viewpoint, perspective and lighting direction on this exact 1536x1024 canvas. Refinish all foreground surfaces as clean premium manufactured hardware with smooth light neutral gray and dark graphite gray plastic, satin dark gray metal and restrained silver edge highlights. Remove ALL yellow/cream/red/olive colors, stains, speckles, mottling, paint chips, grunge, scratches, paper grain and artificial image noise. Clean studio product rendering with smooth broad lighting, crisp molded details and natural controlled reflections. No gritty texture. Keep the outside background perfectly uniform saturated magenta RGB(255,0,255). This cartridge must stay at its exact off-center original position with identical yaw and vertical sides for pixel aligned insertion into its slot. The cartridge plastic is smooth graphite gray. Its blank label recess is clean light neutral gray, perfectly smooth with a subtle thin dark molded inner edge. Keep the label blank. Do not center, enlarge or move the cartridge."
+    },
+    {
+      "file": "library-shell-v4.png",
+      "job_id": "atj_91c78ad91323dfbb235af73fa41d39c50bbcc5313417d256",
+      "asset_id": "ata_adab70ac7808823e7affa48a1b45bdc9e67608c67f5cb166",
+      "visibility": "private",
+      "source_asset_id": "ata_60df21e5c2d5fe9d1c85c6528e05df7d0347924160e22aff",
+      "prompt": "Make a precise material and color edit, preserving EVERY object silhouette, exact pixel coordinates, scale, viewpoint, perspective and lighting direction on this exact 1536x1024 canvas. Refinish all foreground surfaces as clean premium manufactured hardware with smooth light neutral gray and dark graphite gray plastic, satin dark gray metal and restrained silver edge highlights. Remove ALL yellow/cream/red/olive colors, stains, speckles, mottling, paint chips, grunge, scratches, paper grain and artificial image noise. Clean studio product rendering with smooth broad lighting, crisp molded details and natural controlled reflections. No gritty texture. Keep the outside background perfectly uniform saturated magenta RGB(255,0,255). The front-facing game cartridge is smooth graphite gray with the same molded grip lines and shape. Its large blank rectangular label recess is clean neutral light gray, no paper grain, with a very subtle thin dark molded edge. Keep the whole cartridge exactly aligned and label empty."
+    },
+    {
+      "file": "volume-knob-v4.png",
+      "job_id": "atj_3320d9c28b24a4f8c4826d71e83cca43b08d76c4fccb7acc",
+      "asset_id": "ata_2e4f6cb6216104325fb95de26c9149063440ac88be81f966",
+      "visibility": "private",
+      "source_asset_id": "ata_b81a3b471bbd5bbe9507375be68290465fc417d2497a1051",
+      "prompt": "Extract and recreate ONLY the lower TV's physical volume knob as one clean, premium gray rotating knob, orthographic perfectly front-facing view. A circular dark graphite plastic knob with a central raised straight slim silver-gray bar grip running vertically, its upper end pointing to 12 o'clock and carrying one narrow white position mark. Smooth molded surfaces and precise rounded edges, no speckles, stains, scratches, grunge or grain. Match the reference TV's lower control form and gentle upper-left studio lighting, but use neutral graphite, gray and silver only. Center this single isolated circular knob on a perfectly flat saturated magenta RGB(255,0,255) background, with generous equal margins all around, no ground shadow, no surrounding TV, no dial scale, no numbers, no text. Exact square 1024x1024 canvas."
+    }
+  ],
+  "notes": "Private visibility explicitly requested and verified for every final asset. Original PNGs downloaded using the privacy-verifying Forge helper. No credentials or signed URLs are stored. Hardware PNGs are clean; animated CRT is applied only to the screens at runtime."
+}
