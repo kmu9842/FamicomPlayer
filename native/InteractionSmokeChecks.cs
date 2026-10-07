@@ -30,6 +30,7 @@ public partial class WidgetWindow
         int mouseDowns = 0, mouseMoves = 0;
         try
         {
+            await VerifyBrowserSignInFlow();
             const string fixture = "https://www.youtube.com/famicomplayer-input-fixture";
             var core = Browser.CoreWebView2;
             core.AddWebResourceRequestedFilter(fixture, CoreWebView2WebResourceContext.Document);
@@ -87,7 +88,7 @@ public partial class WidgetWindow
             Left = 40; Top = 40; Activate(); SetForegroundWindow(handle);
             await Task.Delay(500); await NativeClick("#probe"); await WaitScript("window.nativeClicks===1");
             Capture("browser-input");
-            File.WriteAllText(Path.Combine(output, "interaction-result.json"), JsonSerializer.Serialize(new { success = true, trustedMouseClick = true, keyboardInput = true, repeatedRoundTrip = true, sameWindowHandle = true, outputSelection = true, outputSaved = true, outputAfterNavigation = true, devicesBefore, permission, devices }, new JsonSerializerOptions { WriteIndented = true }));
+            File.WriteAllText(Path.Combine(output, "interaction-result.json"), JsonSerializer.Serialize(new { success = true, signInRedirects = true, signInPopupOpener = true, signInSharedProfile = true, signInSharedCookies = true, trustedMouseClick = true, keyboardInput = true, repeatedRoundTrip = true, sameWindowHandle = true, outputSelection = true, outputSaved = true, outputAfterNavigation = true, devicesBefore, permission, devices }, new JsonSerializerOptions { WriteIndented = true }));
             closing = true; Application.Current.Shutdown(0);
         }
         catch (Exception error)

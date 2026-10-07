@@ -3,8 +3,13 @@
         <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#14171B"/><GradientStop Color="#343A42" Offset="1"/></LinearGradientBrush></Border.Background>
         <Border.BorderBrush><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#59606B"/><GradientStop Color="#A6AFBB" Offset="1"/></LinearGradientBrush></Border.BorderBrush>
         <Grid>
-            <Grid x:Name="Glass" Background="#101418" ClipToBounds="True">
-                <Image x:Name="Picture" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Grid x:Name="Glass" Background="Black" ClipToBounds="True">
+                <Rectangle RenderOptions.BitmapScalingMode="HighQuality"><Rectangle.Fill><ImageBrush x:Name="Picture" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/></Rectangle.Fill></Rectangle>
+                <Rectangle x:Name="NoiseFlash" Opacity="0"/>
+                <Rectangle x:Name="WhiteSweep" Height="3" VerticalAlignment="Top" Opacity="0">
+                    <Rectangle.RenderTransform><TranslateTransform x:Name="SweepPosition"/></Rectangle.RenderTransform>
+                    <Rectangle.Fill><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#00FFFFFF"/><GradientStop Color="#FFFFFFFF" Offset=".5"/><GradientStop Color="#00FFFFFF" Offset="1"/></LinearGradientBrush></Rectangle.Fill>
+                </Rectangle>
             </Grid>
             <Border CornerRadius="2" BorderBrush="#B8000000" BorderThickness="1,1.8,1,.6" IsHitTestVisible="False"/>
             <Border CornerRadius="2" IsHitTestVisible="False">

@@ -36,4 +36,16 @@ internal static class YouTubeAddress
     }
 
     internal static bool IsYouTubePage(string value) => Uri.TryCreate(value, UriKind.Absolute, out var uri) && uri.Scheme == "https" && uri.Host == "www.youtube.com";
+
+    internal static string PlaylistId(string input)
+    {
+        var match = Regex.Match(Parse(input).Query, @"[?&]list=([a-zA-Z0-9_-]+)(?:&|$)");
+        return match.Success ? match.Groups[1].Value : "";
+    }
+    internal static string PlaylistUrl(string input)
+    {
+        string id = PlaylistId(input);
+        if (id.Length == 0) throw new ArgumentException("재생목록 링크를 입력해 주세요.");
+        return "https://www.youtube.com/playlist?list=" + id;
+    }
 }

@@ -16,6 +16,9 @@ internal static class SelfTests
             var pixel = new byte[4]; hardware.CopyPixels(new System.Windows.Int32Rect(0,0,1,1), pixel, 4, 0);
             if (pixel[3] != 0) throw new Exception("Sprite background is not transparent.");
             CheckCartridgeStore();
+            CheckCartridgeBreath();
+            CheckSignInNavigation();
+            CollectionTests.Run();
             if (!BundledAssets.ReadText("YouTubeBridge.js").Contains("window.famicomplayerNative")) throw new Exception("Bundled playback bridge missing.");
             const string requested = "https://www.youtube.com/watch?v=2qfoSxRRCJc&list=RD2qfoSxRRCJc&index=1";
             if (YouTubeAddress.Parse(requested).AbsoluteUri != requested) throw new Exception("Mix must preserve both the selected video and RD playlist.");
@@ -29,10 +32,50 @@ internal static class SelfTests
                 try { YouTubeAddress.Parse(link); } catch (ArgumentException) { rejected = true; }
                 if (!rejected) throw new Exception("Invalid address accepted: " + link);
             }
-            File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "self-test-result.txt"), "PASS: embedded private Forge artwork, transparent sprite composition, cartridge CRUD and restart persistence, copied custom cover survives source removal, invalid entry rejection, corrupt store recovery, bundled playback bridge, Mix/short/live/embed normalization, timestamps and playlists.");
+            File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "self-test-result.txt"), "PASS: bundled artwork, transparent sprites, cartridge CRUD and restart persistence, collection pagination/cancellation/migration/import/update/unpack/delete, copied custom covers, invalid entry rejection, corrupt store recovery, two-puff WAV, sign-in navigation policy, playback bridge, Mix/short/live/embed normalization, timestamps and playlists.");
             return 0;
         }
         catch (Exception error) { File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "self-test-result.txt"), error.ToString()); return 1; }
+    }
+    private static void CheckSignInNavigation()
+    {
+        foreach (string url in new[] { "https://accounts.google.com/signin/v2/challenge", "https://accounts.youtube.com/accounts/SetSID", "https://www.google.com/accounts/SetSID", "https://www.youtube.com/" })
+            if (!BrowserNavigationPolicy.IsAllowed(url)) throw new Exception("Sign-in handoff was blocked: " + url);
+        foreach (string url in new[] { "http://accounts.youtube.com/", "https://accounts.youtube.com.evil.test/", "https://user@accounts.google.com/", "https://accounts.google.com:444/", "https://www.google.com/search", "file:///tmp/a", "about:blank" })
+            if (BrowserNavigationPolicy.IsAllowed(url)) throw new Exception("Unexpected sign-in navigation allowed: " + url);
+        if (!BrowserNavigationPolicy.IsAllowed("about:blank", true)) throw new Exception("Popup initialization blocked.");
+    }
+    private static void CheckCartridgeBreath()
+    {
+        using var stream = WidgetWindow.MakeCartridgeBreath();
+        using var reader = new BinaryReader(stream);
+        if (new string(reader.ReadChars(4)) != "RIFF" || reader.ReadInt32() != stream.Length - 8)
+            throw new Exception("Cartridge breath WAV header is invalid.");
+        stream.Position = 24;
+        int rate = reader.ReadInt32();
+        if (rate != 22050 || stream.Length != 44 + 16758 * 2) throw new Exception("Cartridge breath WAV duration is invalid.");
+        double Energy(double start, double end)
+        {
+            stream.Position = 44 + (long)(start * rate) * 2;
+            double sum = 0; int count = (int)((end - start) * rate);
+            for (int i = 0; i < count; i++) { double sample = reader.ReadInt16(); sum += sample * sample; }
+            return Math.Sqrt(sum / count);
+        }
+        if (Energy(.06, .24) < 80 || Energy(.43, .61) < 80 || Energy(.30, .38) != 0 || Energy(.68, .75) != 0)
+            throw new Exception("Cartridge breath must contain two audible puffs separated by silence.");
+        static double SignalEnergy(Stream wave)
+        {
+            wave.Position = 44;
+            using var samples = new BinaryReader(wave, System.Text.Encoding.ASCII, true);
+            double total = 0;
+            while (wave.Position < wave.Length) { double sample = samples.ReadInt16(); total += sample * sample; }
+            return total;
+        }
+        using var click = WidgetWindow.MakeClick();
+        double clickEnergy = SignalEnergy(click);
+        double relativeLevel = Math.Sqrt(SignalEnergy(stream) / clickEnergy);
+        if (Math.Abs(relativeLevel - .5) > .001) throw new Exception("Cartridge breath level must be 50% of the click over the same playback window.");
+        if (Math.Abs(Math.Sqrt(clickEnergy / 2866) - 688.5) > 1) throw new Exception("Cartridge click did not receive its 30% level increase.");
     }
     private static void CheckCartridgeStore()
     {

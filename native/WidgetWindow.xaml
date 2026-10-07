@@ -4,6 +4,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="GlassTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <PathGeometry x:Key="ScreenContour" Figures="M18,9 Q200,-6 377,9 Q389,10 393,28 Q403,156 395,290 Q394,299 380,301 Q200,316 19,293 Q8,290 6,273 Q-2,157 8,36 Q10,12 18,9Z" />
             <Style x:Key="HardwareButton" TargetType="Button">
                 <Setter Property="Background" Value="#01000000" />
                 <Setter Property="Cursor" Value="Hand" />
@@ -27,37 +28,51 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="HardwareToggle" TargetType="ToggleButton">
+                <Setter Property="Background" Value="#01000000" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Hit" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="1" BorderBrush="Transparent" />
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Hit" Property="BorderBrush" Value="#80D9E1EB" /><Setter TargetName="Hit" Property="Background" Value="#10D9E1EB" /></Trigger>
+                                <Trigger Property="IsPressed" Value="True"><Setter TargetName="Hit" Property="Background" Value="#66000000" /></Trigger>
+                                <Trigger Property="IsChecked" Value="True"><Setter TargetName="Hit" Property="BorderBrush" Value="#A0D9E1EB" /><Setter TargetName="Hit" Property="Background" Value="#20D9E1EB" /></Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Hit" Property="BorderBrush" Value="#CAD9E1EB" /></Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid PreviewMouseWheel="ScaleWithWheel">
         <Viewbox x:Name="WidgetScale" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Top">
             <Canvas x:Name="Surface" Width="1100" Height="750">
                 <Canvas x:Name="Deck" Width="1100" Height="700" MouseLeftButtonDown="DragWidget">
-                    <Path Data="M427,475 C510,500 478,363 483,342" Stroke="#171A1F" StrokeThickness="10" StrokeStartLineCap="Round" StrokeEndLineCap="Round" IsHitTestVisible="False" />
+                    <Path Data="M427,475 C488,491 454,383 451,368" Stroke="#171A1F" StrokeThickness="10" StrokeStartLineCap="Round" StrokeEndLineCap="Round" IsHitTestVisible="False" />
                     <Canvas Width="900" Height="600" x:Name="Television">
                         <Canvas.RenderTransform>
-                            <MatrixTransform Matrix="1.162,0,0,1.162,145,-64" />
+                            <MatrixTransform Matrix="1.162,0,0,1.162,113,-38" />
                         </Canvas.RenderTransform>
                         <local:SpriteImage x:Name="TvImage" Width="900" Height="600" Stretch="Fill" />
-                        <Grid x:Name="Projection" Canvas.Left="260" Canvas.Top="117" Width="400" Height="316">
+                        <Grid x:Name="Projection" Canvas.Left="260" Canvas.Top="117" Width="400" Height="316" Clip="{StaticResource ScreenContour}">
                             <Grid.RenderTransform>
                                 <SkewTransform AngleY=".8" />
                             </Grid.RenderTransform>
-                            <Grid.Clip>
-                                <PathGeometry Figures="M18,9 Q200,-6 377,9 Q389,10 393,28 Q403,156 395,290 Q394,299 380,301 Q200,316 19,293 Q8,290 6,273 Q-2,157 8,36 Q10,12 18,9Z" />
-                            </Grid.Clip>
                             <Grid.Background>
-                                <RadialGradientBrush>
-                                    <GradientStop Color="#243C32" />
-                                    <GradientStop Color="#0B1511" Offset="1" />
-                                </RadialGradientBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#1D3028" />
+                                    <GradientStop Color="#15251E" Offset="1" />
+                                </LinearGradientBrush>
                             </Grid.Background>
                             <StackPanel x:Name="IdleScreen" IsHitTestVisible="False" />
                             <Viewbox x:Name="VideoViewbox" Stretch="Fill" Opacity="0" IsHitTestVisible="False">
                                 <wv:WebView2CompositionControl x:Name="Browser" Width="960" Height="758" DefaultBackgroundColor="Black" AllowExternalDrop="False" />
                             </Viewbox>
                             <Grid x:Name="Film" IsHitTestVisible="False" Opacity=".68">
-                                <Rectangle Opacity=".48">
+                                <Rectangle Opacity=".624">
                                     <Rectangle.Fill>
                                         <DrawingBrush TileMode="Tile" Viewport="0,0,3,3" ViewportUnits="Absolute">
                                             <DrawingBrush.Drawing>
@@ -66,7 +81,7 @@
                                         </DrawingBrush>
                                     </Rectangle.Fill>
                                 </Rectangle>
-                                <Rectangle Opacity=".15">
+                                <Rectangle Opacity=".195">
                                     <Rectangle.Fill>
                                         <DrawingBrush TileMode="Tile" Viewport="0,0,3,1" ViewportUnits="Absolute">
                                             <DrawingBrush.Drawing>
@@ -79,14 +94,9 @@
                                         </DrawingBrush>
                                     </Rectangle.Fill>
                                 </Rectangle>
-                                <Rectangle>
-                                    <Rectangle.Fill>
-                                        <RadialGradientBrush RadiusX=".7" RadiusY=".73">
-                                            <GradientStop Color="Transparent" Offset=".45" />
-                                            <GradientStop Color="#B5000000" Offset="1" />
-                                        </RadialGradientBrush>
-                                    </Rectangle.Fill>
-                                </Rectangle>
+                                <Path Data="{StaticResource ScreenContour}" Stroke="#B5000000" StrokeThickness="22">
+                                    <Path.Effect><BlurEffect Radius="18" /></Path.Effect>
+                                </Path>
                                 <Rectangle x:Name="ScanBand" Height="28" VerticalAlignment="Top" Opacity=".08">
                                     <Rectangle.RenderTransform>
                                         <TranslateTransform x:Name="ScanOffset" />
@@ -115,19 +125,20 @@
                             </Rectangle>
                             <Button x:Name="VideoHit" Style="{StaticResource HardwareButton}" Click="TogglePlayback" ToolTip="재생 / 일시정지" AutomationProperties.Name="TV 재생 또는 일시정지" />
                         </Grid>
-                        <Grid x:Name="Ambient" Canvas.Left="260" Canvas.Top="117" Width="400" Height="316" IsHitTestVisible="False">
+                        <Grid x:Name="Ambient" Canvas.Left="260" Canvas.Top="117" Width="400" Height="316" IsHitTestVisible="False" Clip="{StaticResource ScreenContour}">
                             <Grid.RenderTransform>
                                 <SkewTransform AngleY=".8" />
                             </Grid.RenderTransform>
-                            <Grid.Clip>
-                                <PathGeometry Figures="M18,9 Q200,-6 377,9 Q389,10 393,28 Q403,156 395,290 Q394,299 380,301 Q200,316 19,293 Q8,290 6,273 Q-2,157 8,36 Q10,12 18,9Z" />
-                            </Grid.Clip>
                             <Grid.OpacityMask>
-                                <RadialGradientBrush RadiusX=".55" RadiusY=".56">
-                                    <GradientStop Color="Transparent" Offset=".75" />
-                                    <GradientStop Color="White" Offset=".95" />
-                                    <GradientStop Color="Transparent" Offset="1" />
-                                </RadialGradientBrush>
+                                <VisualBrush Viewbox="0,0,400,316" ViewboxUnits="Absolute" Stretch="Fill">
+                                    <VisualBrush.Visual>
+                                        <Grid Width="400" Height="316" Background="Transparent" ClipToBounds="True">
+                                            <Path Data="{StaticResource ScreenContour}" Stroke="White" StrokeThickness="28">
+                                                <Path.Effect><BlurEffect Radius="16" /></Path.Effect>
+                                            </Path>
+                                        </Grid>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
                             </Grid.OpacityMask>
                             <Image x:Name="AmbientA" Stretch="Fill" Opacity="0">
                                 <Image.Effect>
@@ -167,8 +178,8 @@
                             </Slider>
                         </Grid>
                     </Canvas>
-                    <Path Data="M371,684 C396,730 692,731 702,530" Stroke="#14171B" StrokeThickness="10" StrokeStartLineCap="Round" StrokeEndLineCap="Round" IsHitTestVisible="False" />
-                    <Path Data="M371,682 C396,728 692,729 702,528" Stroke="#42474D" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" IsHitTestVisible="False" />
+                    <Path Data="M371,684 C396,710 650,717 660,518" Stroke="#14171B" StrokeThickness="10" StrokeStartLineCap="Round" StrokeEndLineCap="Round" IsHitTestVisible="False" />
+                    <Path Data="M371,682 C396,708 650,715 660,516" Stroke="#42474D" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" IsHitTestVisible="False" />
                     <Canvas Width="900" Height="600" x:Name="ConsoleBody">
                         <Canvas.RenderTransform>
                             <MatrixTransform Matrix="1.132,0,0,1.132,-262,156" />
@@ -214,18 +225,26 @@
                                 <PathGeometry Figures="M0,274 H900 V600 H0Z" />
                             </Image.Clip>
                         </Image>
+                        <!-- Cover the original printed nameplate without altering the bundled artwork. -->
+                        <Path Data="M273,371.5 H625 Q629,371.5 629.4,376 L630.9,398 Q631.2,401.5 627,401.5 H270 Q266.8,401.5 267.2,398 L268.5,376 Q268.8,371.5 273,371.5Z" Stroke="#7C837E" StrokeThickness=".55" IsHitTestVisible="False">
+                            <Path.Fill><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#444C48"/><GradientStop Color="#3D4541" Offset="1"/></LinearGradientBrush></Path.Fill>
+                            <Path.Effect><local:HardwareFinishEffect Gain=".975" Lift="-.021"/></Path.Effect>
+                        </Path>
                         <Button x:Name="Previous" Canvas.Left="322" Canvas.Top="323" Width="47" Height="27" Style="{StaticResource HardwareButton}" Click="PreviousTrack" ToolTip="이전 영상" AutomationProperties.Name="본체 이전 영상" />
                         <Button x:Name="Next" Canvas.Left="527" Canvas.Top="323" Width="48" Height="27" Style="{StaticResource HardwareButton}" Click="NextTrack" ToolTip="다음 영상" AutomationProperties.Name="본체 다음 영상" />
                         <Button x:Name="Play" Canvas.Left="399" Canvas.Top="297" Width="99" Height="49" Style="{StaticResource HardwareButton}" Click="TogglePlayback" ToolTip="배출 레버 · 재생 / 일시정지" AutomationProperties.Name="게임팩 배출 레버 재생 또는 일시정지" />
                     </Canvas>
-                    <Canvas Canvas.Left="550" Canvas.Top="530" Width="400" Height="158" x:Name="Controller">
+                    <Canvas Canvas.Left="508" Canvas.Top="518" Width="400" Height="158" x:Name="Controller">
                         <local:SpriteImage x:Name="PadImage" Width="400" Height="158" Stretch="Fill" />
-                        <Button Canvas.Left="61" Canvas.Top="45" Width="27" Height="23" Style="{StaticResource HardwareButton}" Click="SeekForward" ToolTip="10초 앞으로" AutomationProperties.Name="10초 앞으로" />
+                        <Border Canvas.Left="62" Canvas.Top="28" Width="29" Height="16" Background="#D0D0D0" IsHitTestVisible="False"><TextBlock Text="VOL+" FontSize="9" FontWeight="Bold" Foreground="#323232" TextAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border Canvas.Left="62" Canvas.Top="115" Width="29" Height="13" Background="#CBCBCB" IsHitTestVisible="False"><TextBlock Text="VOL−" FontSize="9" FontWeight="Bold" Foreground="#323232" TextAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Border Canvas.Left="204" Canvas.Top="68" Width="29" Height="21" Background="#CCCCCC" IsHitTestVisible="False"><TextBlock Text="CC" FontFamily="Arial" FontSize="13" FontWeight="Bold" Foreground="#323232" TextAlignment="Center" VerticalAlignment="Center"/></Border>
+                        <Button x:Name="PadVolumeUp" Canvas.Left="61" Canvas.Top="45" Width="27" Height="23" Style="{StaticResource HardwareButton}" Click="VolumeUp" ToolTip="볼륨 높이기" AutomationProperties.Name="볼륨 높이기" />
                         <Button Canvas.Left="36" Canvas.Top="68" Width="26" Height="23" Style="{StaticResource HardwareButton}" Click="SeekBack" ToolTip="10초 뒤로" AutomationProperties.Name="10초 뒤로" />
                         <Button Canvas.Left="87" Canvas.Top="68" Width="26" Height="23" Style="{StaticResource HardwareButton}" Click="SeekForward" ToolTip="10초 앞으로" AutomationProperties.Name="10초 앞으로" />
-                        <Button Canvas.Left="61" Canvas.Top="89" Width="27" Height="23" Style="{StaticResource HardwareButton}" Click="SeekBack" ToolTip="10초 뒤로" AutomationProperties.Name="10초 뒤로" />
+                        <Button x:Name="PadVolumeDown" Canvas.Left="61" Canvas.Top="89" Width="27" Height="23" Style="{StaticResource HardwareButton}" Click="VolumeDown" ToolTip="볼륨 낮추기" AutomationProperties.Name="볼륨 낮추기" />
                         <Button x:Name="SettingsButton" Canvas.Left="143" Canvas.Top="73" Width="36" Height="39" Style="{StaticResource HardwareButton}" Click="OpenSettings" ToolTip="설정" AutomationProperties.Name="설정" />
-                        <Button x:Name="PlaylistButton" Canvas.Left="200" Canvas.Top="73" Width="36" Height="39" Style="{StaticResource HardwareButton}" Click="TogglePlaylist" ToolTip="재생목록" AutomationProperties.Name="재생목록" />
+                        <ToggleButton x:Name="CaptionsButton" Canvas.Left="200" Canvas.Top="73" Width="36" Height="39" Style="{StaticResource HardwareToggle}" Click="CaptionsChanged" ToolTip="자막 켜기 / 끄기" AutomationProperties.Name="자막 켜기 / 끄기" />
                         <Button Canvas.Left="270" Canvas.Top="58" Width="40" Height="56" Style="{StaticResource HardwareButton}" Click="OpenLibrary" ToolTip="게임팩 보관함" AutomationProperties.Name="게임팩 보관함" />
                         <Button Canvas.Left="326" Canvas.Top="58" Width="42" Height="56" Style="{StaticResource HardwareButton}" Click="TogglePlayback" ToolTip="재생 / 일시정지" AutomationProperties.Name="재생 또는 일시정지" />
                     </Canvas>
@@ -246,7 +265,6 @@
                     <Grid Margin="10,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="34" />
                             <ColumnDefinition Width="34" />
                         </Grid.ColumnDefinitions>
                         <Grid>
@@ -271,7 +289,6 @@
                             </TextBox>
                         </Grid>
                         <Button Grid.Column="1" Content="↵" Click="SubmitAddress" ToolTip="링크 재생" />
-                        <ToggleButton x:Name="CaptionsButton" Grid.Column="2" Content="CC" Height="27" Width="32" Style="{StaticResource GlassToggle}" Click="CaptionsChanged" ToolTip="자막 켜기 / 끄기" FontSize="14" />
                     </Grid>
                 </Border>
                 <Border x:Name="StatusBox" Canvas.Left="146" Canvas.Top="734" Width="808" Visibility="Collapsed">
@@ -311,7 +328,7 @@
                     <Button Content="위젯으로 돌아가기" Click="CloseYouTubePage" FontSize="12" />
                     <Button Content="×" DockPanel.Dock="Right" Width="32" Click="CloseYouTubePage" AutomationProperties.Name="브라우저 닫기" />
                     <Button Content="홈" DockPanel.Dock="Right" Width="40" Click="OpenYouTubeHome" FontSize="12" />
-                    <TextBlock Text="YouTube · FamicomPlayer" Foreground="#CCFFFFFF" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <TextBlock x:Name="BrowserPageHeading" Text="YouTube · FamicomPlayer" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Foreground="#CCFFFFFF" VerticalAlignment="Center" HorizontalAlignment="Center" />
                 </DockPanel>
                 <ContentControl x:Name="BrowserContent" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
             </Grid>

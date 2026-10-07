@@ -13,7 +13,7 @@
     html.tt-widget .ytp-chrome-top,html.tt-widget .ytp-chrome-bottom,html.tt-widget .ytp-gradient-top,html.tt-widget .ytp-gradient-bottom{visibility:hidden!important;display:none!important}
     html.tt-widget:not(.tt-captions) .ytp-caption-window-container{visibility:hidden!important;display:none!important}
   `;
-  let widget = true, volume = Number(window.__famicomplayerInitialVolume ?? 65);
+  let widget = window.__famicomplayerInitialWidgetMode !== false, volume = Number(window.__famicomplayerInitialVolume ?? 65);
   let desiredPlaying = true, playUntil = Date.now() + 12000, playAttempt = 0, lastVideo;
   let epoch = '', endedAt = 0, transition = null, failedEpoch = '', navigatingAt = 0;
   let skipButton = null, skipAttempts = 0, skipAttemptAt = 0, nativeSkipRequested = false;
@@ -36,7 +36,101 @@
   const isAd = () => !!player()?.classList?.contains('ad-showing') || !!player()?.classList?.contains('ad-interrupting');
   const enabled = element => !!element && !element.disabled && element.getAttribute('aria-disabled') !== 'true';
   const locationKey = () => { const u = new URL(location.href); return [u.searchParams.get('v'), u.searchParams.get('list'), u.searchParams.get('index')].join(':'); };
-  const wantsPlay = () => { desiredPlaying = true; playUntil = Date.now() + 12000; playAttempt = 0; };
+  const cartridgeGateEnabled = window.__famicomplayerGatePlayback === true;
+  const cartridgeDocument = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+  const originalMediaPlay = typeof HTMLMediaElement !== 'undefined' ? HTMLMediaElement.prototype.play : null;
+  let cartridgeSequence = 0, cartridgeRequest = null, cartridgeApprovedKey = null, cartridgeMutedVideo = null, cartridgeObservedKey = locationKey();
+  let pendingMediaPlays = [];
+  const isPlaybackPage = () => ['/watch','/playlist'].includes(location.pathname);
+  const cartridgeBlocksPlayback = () => cartridgeGateEnabled && widget && isPlaybackPage() && !isAd() &&
+    (!desiredPlaying || cartridgeApprovedKey !== locationKey() || !!transition);
+  const abortPlayback = () => Object.assign(new Error('Cartridge playback request was replaced.'), {name:'AbortError'});
+  function invalidateCartridge() {
+    cartridgeRequest = null; cartridgeApprovedKey = null;
+    const pending = pendingMediaPlays; pendingMediaPlays = [];
+    for (const request of pending) request.reject(abortPlayback());
+  }
+  function resumeMediaAfterCartridge() {
+    const v = video(), pending = pendingMediaPlays; pendingMediaPlays = [];
+    for (const request of pending) if (request.video !== v) request.reject(abortPlayback());
+    if (!v || !desiredPlaying) {
+      for (const request of pending) if (request.video === v) request.reject(abortPlayback());
+      return;
+    }
+    const resume = originalMediaPlay ? originalMediaPlay.call(v) : v.play();
+    Promise.resolve(resume).then(() => {
+      for (const request of pending) if (request.video === v) request.resolve();
+    }, error => {
+      for (const request of pending) if (request.video === v) request.reject(error);
+      if (error?.name !== 'AbortError') {
+        desiredPlaying = false; playUntil = 0;
+        post({type:'notice', message:'브라우저에서 재생을 눌러 주세요.'});
+      }
+    });
+  }
+  function syncCartridgeGate() {
+    if (!cartridgeGateEnabled) return false;
+    const v = video(), key = locationKey();
+    if (cartridgeObservedKey !== key) { invalidateCartridge(); cartridgeObservedKey = key; }
+    if (cartridgeRequest && (cartridgeRequest.key !== key || cartridgeRequest.video !== v)) invalidateCartridge();
+    if (!cartridgeBlocksPlayback()) {
+      if (cartridgeRequest && isAd()) cartridgeRequest = null;
+      if (cartridgeMutedVideo) {
+        cartridgeMutedVideo.muted = volume === 0; cartridgeMutedVideo = null;
+        setVolume(volume);
+      }
+      if (pendingMediaPlays.length && desiredPlaying) resumeMediaAfterCartridge();
+      return false;
+    }
+    if (v) {
+      // Stop attribute autoplay as well as player.play(). Muting precedes pause,
+      // so an autoplay event cannot leak audio while the cartridge is still up.
+      v.autoplay = false; v.muted = true; cartridgeMutedVideo = v;
+      if (!v.paused) v.pause();
+    }
+    if (!desiredPlaying || !v || v.readyState < 2 || v.ended || transition || navigatingAt || failedEpoch === key) return true;
+    const videoId = new URL(location.href).searchParams.get('v'), data = player()?.getVideoData?.() || {};
+    if (!/^[\w-]{11}$/.test(videoId || '') || data.video_id !== videoId) return true;
+    if (!cartridgeRequest) {
+      cartridgeRequest = {requestId:cartridgeDocument + ':' + (++cartridgeSequence), key, video:v, videoId};
+      post({type:'cartridge-ready', requestId:cartridgeRequest.requestId, videoId, title:data.title || ''});
+    }
+    return true;
+  }
+  function releaseCartridge(requestId) {
+    const request = cartridgeRequest, v = video();
+    if (!request || request.requestId !== requestId || request.key !== locationKey() || request.video !== v ||
+        !desiredPlaying || !widget || isAd() || transition || !v || v.readyState < 2 ||
+        player()?.getVideoData?.().video_id !== request.videoId) return false;
+    cartridgeApprovedKey = request.key; cartridgeRequest = null;
+    playUntil = Date.now() + 12000; playAttempt = 0;
+    cartridgeMutedVideo = null; setVolume(volume); resumeMediaAfterCartridge();
+    return true;
+  }
+  if (cartridgeGateEnabled && originalMediaPlay) {
+    HTMLMediaElement.prototype.play = function(...args) {
+      if (this.tagName === 'VIDEO' && cartridgeBlocksPlayback()) {
+        this.muted = true; if (!this.paused) this.pause();
+        syncCartridgeGate();
+        return new Promise((resolve, reject) => pendingMediaPlays.push({video:this, resolve, reject}));
+      }
+      return originalMediaPlay.apply(this, args);
+    };
+    for (const event of ['play','playing','loadeddata','canplay'])
+      document.addEventListener(event, () => { syncCartridgeGate(); }, true);
+  }
+  const wantsPlay = () => { desiredPlaying = true; playUntil = Date.now() + 12000; playAttempt = 0; failedEpoch = ''; };
+  function requestPlayback() {
+    if (!desiredPlaying || (!cartridgeRequest && cartridgeApprovedKey === locationKey() && video()?.paused)) invalidateCartridge();
+    wantsPlay();
+    syncCartridgeGate();
+    video()?.play().catch(error => {
+      // Replacing a video during navigation aborts the old play request normally.
+      if (error?.name === 'AbortError') return;
+      desiredPlaying = false; playUntil = 0; transition = null;
+      post({type:'notice', message:'브라우저에서 재생을 눌러 주세요.'});
+    });
+  }
   function applyMode() {
     if (!document.documentElement) return;
     if (!style.isConnected) document.documentElement.append(style);
@@ -46,8 +140,9 @@
   function setVolume(value) {
     volume = Math.max(0, Math.min(100, Number(value)));
     const p = player(), v = video();
-    if (p?.setVolume) { p.setVolume(volume); if (volume > 0) p.unMute?.(); else p.mute?.(); }
-    if (v) { v.volume = volume / 100; v.muted = volume === 0; }
+    const muted = volume === 0 || cartridgeBlocksPlayback();
+    if (p?.setVolume) { p.setVolume(volume); if (!muted) p.unMute?.(); else p.mute?.(); }
+    if (v) { v.volume = volume / 100; v.muted = muted; }
   }
   function setCrt(options = {}) {
     const clamp = (v, low, high, fallback) => Number.isFinite(Number(v)) ? Math.max(low, Math.min(high, Number(v))) : fallback;
@@ -102,6 +197,7 @@
     const hasList = !!new URL(location.href).searchParams.get('list');
     // An automatic transition must remain inside the currently loaded list.
     if (automatic && (!hasList || !target)) return;
+    invalidateCartridge();
     wantsPlay(); endedAt = 0;
     transition = { key: locationKey(), direction, target, stage: 0, at: Date.now() };
     stepTransition();
@@ -186,35 +282,45 @@
     } finally { outputApplying = false; if (requested !== outputDevice) { outputAttempt = ''; void applyOutput(true); } }
   }
   window.famicomplayerNative = {
-    setWidgetMode(value) { widget = !!value; applyMode(); },
+    setWidgetMode(value) {
+      const previous = widget, held = cartridgeBlocksPlayback(); widget = !!value;
+      if (previous !== widget) {
+        if (!widget) {
+          cartridgeRequest = null; cartridgeApprovedKey = null; setVolume(volume);
+          if (held && desiredPlaying) resumeMediaAfterCartridge();
+        } else if (video() && !video().paused) cartridgeApprovedKey = locationKey();
+      }
+      applyMode(); syncCartridgeGate();
+    },
+    releaseCartridge,
     setVolume,
     setCrt,
     seek(seconds) { const v=video(); if(v && !isAd() && Number.isFinite(v.duration)) v.currentTime=Math.max(0,Math.min(v.duration-.1,v.currentTime+Number(seconds||0))); },
     setCaptions(value) { captions = !!value; captionAttempt = 0; applyMode(); syncCaptions(); },
-    toggle() { const v = video(); if (v) { if (v.paused) { wantsPlay(); v.play().catch(() => post({type:'notice', message:'브라우저에서 재생을 눌러 주세요.'})); } else { desiredPlaying = false; playUntil = 0; transition = null; v.pause(); } } },
-    play() { wantsPlay(); video()?.play().catch(() => {}); },
-    pause() { desiredPlaying = false; playUntil = 0; transition = null; video()?.pause(); },
+    toggle() { const v = video(); if (v) { if (v.paused && !cartridgeRequest) requestPlayback(); else { desiredPlaying = false; playUntil = 0; transition = null; invalidateCartridge(); v.pause(); } } },
+    play:requestPlayback,
+    pause() { desiredPlaying = false; playUntil = 0; transition = null; invalidateCartridge(); video()?.pause(); },
     next() { advance(1); },
     previous() { advance(-1); },
     skipTarget() { const b = findSkipButton(); if (!b) return null; const r = b.getBoundingClientRect(); return {x:r.x+r.width/2, y:r.y+r.height/2}; },
     listAudioOutputs,
     setAudioOutput(id) { outputDevice = String(id || ''); outputAttempt = ''; if (!video()) { rememberOutput(); post({type:'audio-output',deviceId:outputDevice,ok:true}); } else void applyOutput(true); }
   };
-  document.addEventListener('yt-navigate-start', () => { navigatingAt = Date.now(); });
+  document.addEventListener('yt-navigate-start', () => { navigatingAt = Date.now(); invalidateCartridge(); syncCartridgeGate(); });
   document.addEventListener('yt-navigate-finish', () => { navigatingAt = 0; if (desiredPlaying) wantsPlay(); });
   const userPlaybackAction = event => {
     if (event.target?.closest?.('input,textarea,[contenteditable="true"]')) return;
     if (event.type === 'pointerdown' && !event.target?.closest?.('.ytp-play-button,video')) return;
     if (event.type === 'keydown' && ![' ', 'k', 'K'].includes(event.key)) return;
     userActionAt = Date.now();
-    setTimeout(() => { const v = video(); if (!v || v.ended) return; desiredPlaying = !v.paused; playUntil = 0; if (!desiredPlaying) transition = null; }, 150);
+    setTimeout(() => { const v = video(); if (!v || v.ended || cartridgeRequest) return; desiredPlaying = !v.paused; playUntil = 0; if (!desiredPlaying) { transition = null; invalidateCartridge(); } }, 150);
   };
   document.addEventListener('pointerdown', userPlaybackAction, true);
   document.addEventListener('keydown', userPlaybackAction, true);
   navigator.mediaDevices?.addEventListener?.('devicechange', () => { outputAttempt = ''; void listAudioOutputs(); void applyOutput(true); });
   if (document.documentElement && typeof MutationObserver !== 'undefined') {
     let queued = false;
-    new MutationObserver(() => { if (!queued) { queued = true; setTimeout(() => { queued = false; try { skipAds(); } catch {} }, 50); } })
+    new MutationObserver(() => { syncCartridgeGate(); if (!queued) { queued = true; setTimeout(() => { queued = false; try { skipAds(); } catch {} }, 50); } })
       .observe(document.documentElement, {subtree:true, childList:true, attributes:true, attributeFilter:['class','disabled','aria-disabled','style']});
   }
   setInterval(() => {
@@ -223,6 +329,7 @@
       const p = player(), v = video(), data = p?.getVideoData?.() || {};
       const key = locationKey(), ad = isAd();
       if (key !== epoch) {
+        if (cartridgeRequest && cartridgeRequest.key !== key) invalidateCartridge();
         epoch = key; endedAt = 0; transition = null; failedEpoch = ''; outputAttempt = '';
         if (desiredPlaying) wantsPlay();
       }
@@ -238,8 +345,9 @@
         if (first) { playlistStarted = true; location.replace(first.href); return; }
       }
       if (v !== lastVideo) { lastVideo = v; outputAttempt = ''; setVolume(volume); }
+      const cartridgeBlocked = syncCartridgeGate();
       void applyOutput();
-      if (desiredPlaying && v && v.paused && !v.ended && v.readyState >= 2 && Date.now() < playUntil && Date.now() - playAttempt > 600 && Date.now() - userActionAt > 500) {
+      if (!cartridgeBlocked && desiredPlaying && v && v.paused && !v.ended && v.readyState >= 2 && Date.now() < playUntil && Date.now() - playAttempt > 600 && Date.now() - userActionAt > 500) {
         playAttempt = Date.now(); v.play().catch(() => {});
       }
       if (v && !v.paused && !ad) playUntil = 0;
@@ -252,7 +360,9 @@
       const tracks = playlistTracks(), cc = document.querySelector('.ytp-subtitles-button');
       post({type:'state', url:location.href, videoId:data.video_id || new URL(location.href).searchParams.get('v') || '',
         title:data.title || document.querySelector('h1.ytd-watch-metadata')?.textContent?.trim() || '',
-        playing:!!v && !v.paused && !v.ended && v.readyState >= 3, hasVideo:!!v && v.readyState >= 2,
+        playing:!cartridgeBlocksPlayback() && !!v && !v.paused && !v.ended && v.readyState >= 3, hasVideo:!!v && v.readyState >= 2,
+        playbackRequested:desiredPlaying && isPlaybackPage(), insertionPending:!!cartridgeRequest, insertionRequestId:cartridgeRequest?.requestId || '',
+        buffering:desiredPlaying && !error && failedEpoch !== epoch && isPlaybackPage() && !cartridgeRequest && (cartridgeBlocksPlayback() || !v || v.readyState < 3 || !!transition),
         time:v?.currentTime || 0, duration:Number.isFinite(v?.duration) ? v.duration : 0, volume:v ? Math.round(v.volume * 100) : volume,
         hasNext:!!adjacent(1, tracks) || (!new URL(location.href).searchParams.get('list') && enabled(next)),
         hasPrevious:!!previous && previous.getAttribute('aria-disabled') !== 'true' && getComputedStyle(previous).display !== 'none',

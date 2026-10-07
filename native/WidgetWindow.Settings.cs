@@ -6,7 +6,11 @@ namespace FamicomPlayer;
 public partial class WidgetWindow
 {
     private SettingsWindow? settingsWindow;
-    private void ApplyVideoOpacity() => VideoViewbox.Opacity = videoAvailable ? preferences.VideoOpacity / 100 : 0;
+    private void ApplyVideoOpacity()
+    {
+        VideoViewbox.Opacity = videoAvailable ? preferences.VideoOpacity / 100 : 0;
+        if (!videoAvailable) ClearAmbientReflection();
+    }
 
     private void OpenSettings(object sender, RoutedEventArgs e) { if(e.RoutedEvent!=null)e.Handled=true; ShowSettings(); }
 

@@ -54,7 +54,7 @@ public partial class WidgetWindow : Window
     private readonly DispatcherTimer visualTimer;
     private bool initialized, browserReady, playing, sampling, closing, videoAvailable;
     private bool ambientLayer;
-    private int ambientFrames;
+    private int ambientFrames, ambientRevision;
     private bool pageOpen, openingPage, closePageRequested;
     private Rect widgetBounds;
     private string lastUrl = "", lastError = "";
@@ -94,6 +94,7 @@ public partial class WidgetWindow : Window
         InitializeComponent();
         if (Program.ObsSmoke) Title = "FamicomPlayer verification";
         InitializeCartridges();
+        InitializePlaybackSounds();
         using (var iconStream = BundledAssets.Open("App.ico"))
             Icon = BitmapFrame.Create(iconStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
         using (var iconStream = BundledAssets.Open("App.ico"))
@@ -142,6 +143,7 @@ public partial class WidgetWindow : Window
         Closed += (_, _) =>
         {
             closing = true; Save(); visualTimer.Stop(); CompositionTarget.Rendering -= Animate;
+            DisposePlaybackSounds(); CloseBrowserPopups();
             settingsWindow?.Close(); libraryWindow?.Close(); coverCancellation?.Cancel(); cartridgePlayer?.Dispose(); clickStream?.Dispose(); obsAudio?.Dispose(); Browser.Dispose(); tray.Dispose(); appTrayIcon.Dispose();
         };
         Closing += (_, e) => { if (pageOpen && !closing) { e.Cancel = true; CloseYouTubePage(this, new RoutedEventArgs()); } };
@@ -169,35 +171,26 @@ public partial class WidgetWindow : Window
                 outputSelectionAvailable = true;
             }
             catch (Exception error) { LogPlayback("audio-permission", error.Message); }
-            core.NewWindowRequested += (_, e) =>
-            {
-                e.Handled = true;
-                if (Uri.TryCreate(e.Uri, UriKind.Absolute, out var uri) && uri.Scheme == "https")
-                {
-                    if (uri.Host == "accounts.google.com" || uri.Host == "www.youtube.com" || uri.Host == "consent.youtube.com" || uri.Host == "consent.google.com")
-                        core.Navigate(uri.AbsoluteUri);
-                    else Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
-                }
-            };
-            core.NavigationStarting += (_, e) =>
-            {
-                if (!Uri.TryCreate(e.Uri, UriKind.Absolute, out var uri) || uri.Scheme != "https" ||
-                    !(uri.Host == "www.youtube.com" || uri.Host == "accounts.google.com" || uri.Host == "consent.youtube.com" || uri.Host == "consent.google.com"))
-                    e.Cancel = true;
-            };
+            ConfigureBrowserNavigation(core);
             core.WebMessageReceived += ReceiveState;
             core.NavigationCompleted += async (_, e) =>
             {
-                if (!e.IsSuccess) { playing = false; Notice("유튜브 페이지를 열지 못했습니다: " + e.WebErrorStatus); return; }
+                if (!e.IsSuccess)
+                {
+                    if (e.WebErrorStatus == CoreWebView2WebErrorStatus.OperationCanceled) return;
+                    playing = false; StopPlaybackConnection();
+                    string message = "유튜브 페이지를 열지 못했습니다: " + e.WebErrorStatus;
+                    Notice(message); BrowserPageHeading.Text = message; return;
+                }
                 await Execute("window.famicomplayerNative?.setVolume(" + Volume.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) + "); window.famicomplayerNative?.setWidgetMode(" + (!pageOpen ? "true" : "false") + ")");
                 await Execute("window.famicomplayerNative?.setCaptions(" + (preferences.Captions ? "true" : "false") + ")");
                 ApplyCrtColor();
                 await Execute("window.famicomplayerNative?.setAudioOutput(" + JsonSerializer.Serialize(preferences.OutputDevice) + ");window.famicomplayerNative?.listAudioOutputs()");
-                if (!YouTubeAddress.IsYouTubePage(core.Source)) Notice("설정의 ‘유튜브 페이지 보기’에서 로그인 또는 동의를 진행하세요.");
+                if (!YouTubeAddress.IsYouTubePage(core.Source)) { StopPlaybackConnection(); Notice("설정의 ‘유튜브 페이지 보기’에서 로그인 또는 동의를 진행하세요."); }
             };
-            core.ProcessFailed += (_, e) => { playing = false; Notice("재생 프로세스가 종료되었습니다. 링크를 다시 실행해 주세요."); };
+            core.ProcessFailed += (_, e) => { playing = false; StopPlaybackConnection(); CancelCartridgeInsertion(); Notice("재생 프로세스가 종료되었습니다. 링크를 다시 실행해 주세요."); };
             var bridge = BundledAssets.ReadText("YouTubeBridge.js");
-            await core.AddScriptToExecuteOnDocumentCreatedAsync("window.__famicomplayerInitialVolume=" + Volume.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) + "; window.__famicomplayerInitialCaptions=" + (preferences.Captions ? "true" : "false") + ";window.__famicomplayerInitialOutputDevice=" + JsonSerializer.Serialize(preferences.OutputDevice) + ";\n" + bridge);
+            await core.AddScriptToExecuteOnDocumentCreatedAsync("window.__famicomplayerGatePlayback=true;window.__famicomplayerInitialVolume=" + Volume.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) + "; window.__famicomplayerInitialCaptions=" + (preferences.Captions ? "true" : "false") + ";window.__famicomplayerInitialOutputDevice=" + JsonSerializer.Serialize(preferences.OutputDevice) + ";\n" + bridge);
             browserReady = true; browserInitialized.TrySetResult();
             UpdateObsOutput();
         }
@@ -215,11 +208,14 @@ public partial class WidgetWindow : Window
             if (type == "skip-input") { _ = SkipAdWithInput(); return; }
             if (type == "diagnostic" || type == "bridge-error") { LogPlayback(type, state.ToString()); return; }
             if (type.StartsWith("audio-", StringComparison.Ordinal)) { ReceiveAudioState(state); return; }
-            if (type == "notice") { Notice(state.GetProperty("message").GetString() ?? ""); return; }
+            if (type == "notice") { StopPlaybackConnection(); CancelCartridgeInsertion(); Notice(state.GetProperty("message").GetString() ?? ""); return; }
+            if (type == "cartridge-ready") { _ = CompleteCartridgeInsertion(state); return; }
             if (type != "state") return;
             lastState = state.Clone();
             bool previouslyPlaying=playing;
             playing = state.GetProperty("playing").GetBoolean();
+            UpdateCartridgeInsertionState(state);
+            UpdatePlaybackConnection(state);
             if(previouslyPlaying!=playing)UpdateCartridgeSeating();
             bool hasVideo = state.GetProperty("hasVideo").GetBoolean();
             videoAvailable = hasVideo;
@@ -243,7 +239,7 @@ public partial class WidgetWindow : Window
             {
                 if (currentVideoUrl.Length > 0 && !navigatingBack && currentVideoId != videoId) previousVideos.Push(currentVideoUrl);
                 coverNeedsRefresh = false; navigatingBack = false; currentVideoId = videoId; currentVideoUrl = url;
-                _ = UpdateCartridgeCover(videoId, state.GetProperty("title").GetString() ?? "");
+                if (!CartridgeInsertionPending) _ = UpdateCartridgeCover(videoId, state.GetProperty("title").GetString() ?? "", false);
                 Previous.IsEnabled = previousVideos.Count > 0 || state.GetProperty("hasPrevious").GetBoolean();
             }
             if (url != lastUrl && YouTubeAddress.IsYouTubePage(url))
@@ -272,6 +268,7 @@ public partial class WidgetWindow : Window
         try
         {
             var uri = YouTubeAddress.Parse(Address.Text);
+            BeginPlaybackConnection();
             Notice("유튜브를 불러오는 중…");
             await browserInitialized.Task;
             playing = false; videoAvailable = false; ApplyVideoOpacity(); Previous.IsEnabled = Next.IsEnabled = false;
@@ -280,15 +277,15 @@ public partial class WidgetWindow : Window
             settingsWindow?.Close();
             PlaylistPanel.Visibility = Visibility.Collapsed;
         }
-        catch (ArgumentException error) { Notice(error.Message); if (propagateErrors) throw; }
-        catch (Exception error) { Notice("재생을 시작하지 못했습니다: " + error.Message); if (propagateErrors) throw; }
+        catch (ArgumentException error) { StopPlaybackConnection(); Notice(error.Message); if (propagateErrors) throw; }
+        catch (Exception error) { StopPlaybackConnection(); Notice("재생을 시작하지 못했습니다: " + error.Message); if (propagateErrors) throw; }
     }
 
     private async Task Execute(string script)
     {
         if (!browserReady || closing) return;
         try { await Browser.CoreWebView2.ExecuteScriptAsync(script); }
-        catch (Exception error) when (error is InvalidOperationException || error is System.Runtime.InteropServices.COMException) { Notice("재생 페이지가 준비되면 다시 눌러 주세요."); }
+        catch (Exception error) when (error is InvalidOperationException || error is System.Runtime.InteropServices.COMException) { StopPlaybackConnection(); CancelCartridgeInsertion(); Notice("재생 페이지가 준비되면 다시 눌러 주세요."); }
     }
     private async void SubmitAddress(object sender, RoutedEventArgs e) { preferences.ActiveCartridgeId = ""; await LoadAddress(); }
     private async void AddressKeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Enter) { e.Handled = true; preferences.ActiveCartridgeId = ""; await LoadAddress(); } }
@@ -296,14 +293,17 @@ public partial class WidgetWindow : Window
     {
         if (e.RoutedEvent != null) e.Handled = true;
         if (string.IsNullOrEmpty(lastUrl)) { if (Address.Text.Length > 0) await LoadAddress(); return; }
-        await Execute("window.famicomplayerNative?.toggle()");
+        bool pause = playing || playbackConnectionPending || CartridgeInsertionPending || cartridgeSeatedForPlayback;
+        if (pause) { StopPlaybackConnection(); CancelCartridgeInsertion(); } else BeginPlaybackConnection();
+        await Execute("window.famicomplayerNative?." + (pause ? "pause" : "play") + "()");
     }
     private async void PreviousTrack(object sender, RoutedEventArgs e)
     {
+        BeginPlaybackConnection();
         if (previousVideos.TryPop(out string? previous)) { navigatingBack = true; playing = false; Browser.CoreWebView2.Navigate(previous); }
         else await Execute("window.famicomplayerNative?.previous()");
     }
-    private async void NextTrack(object sender, RoutedEventArgs e) => await Execute("window.famicomplayerNative?.next()");
+    private async void NextTrack(object sender, RoutedEventArgs e) { BeginPlaybackConnection(); await Execute("window.famicomplayerNative?.next()"); }
     private async void CaptionsChanged(object sender, RoutedEventArgs e)
     {
         e.Handled = true;
@@ -331,7 +331,6 @@ public partial class WidgetWindow : Window
         {
             if (!playlist.SequenceEqual(entries)) { playlist = entries; PlaylistTracks.ItemsSource = playlist; }
             PlaylistTracks.SelectedIndex = selected;
-            PlaylistButton.IsEnabled = playlist.Count > 0;
             PlaylistHeading.Text = "재생목록 · " + playlist.Count;
         }
         finally { updatingPlaylist = false; }
@@ -374,12 +373,14 @@ public partial class WidgetWindow : Window
     }
     private async Task ReflectVideo()
     {
-        if (!playing || !preferences.Ambient || sampling || !browserReady || !IsVisible || closing || pageOpen) return;
+        if (!playing || !videoAvailable || !preferences.Ambient || sampling || !browserReady || !IsVisible || closing || pageOpen) return;
         sampling = true;
+        int revision = ambientRevision;
         try
         {
             using var stream = new MemoryStream();
             await Browser.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png, stream);
+            if (revision != ambientRevision || !playing || !videoAvailable || !preferences.Ambient || closing || pageOpen) return;
             stream.Position = 0;
             var image = new BitmapImage(); image.BeginInit(); image.StreamSource = stream; image.CacheOption = BitmapCacheOption.OnLoad; image.DecodePixelWidth = 80; image.EndInit(); image.Freeze();
             var front = ambientLayer ? AmbientA : AmbientB;
@@ -391,6 +392,16 @@ public partial class WidgetWindow : Window
         }
         catch (Exception) when (!closing) { }
         finally { sampling = false; }
+    }
+    private void ClearAmbientReflection()
+    {
+        ambientRevision++;
+        foreach (var layer in new[] { AmbientA, AmbientB })
+        {
+            layer.BeginAnimation(OpacityProperty, null);
+            layer.Opacity = 0;
+            layer.Source = null;
+        }
     }
     private void ApplyOptions() { Topmost = preferences.Pin; if (settingsWindow != null) settingsWindow.Topmost = preferences.Pin; Film.Visibility = preferences.Effect ? Visibility.Visible : Visibility.Collapsed; Film.Opacity = preferences.CrtStrength / 100; Ambient.Visibility = preferences.Ambient ? Visibility.Visible : Visibility.Collapsed; Ambient.Opacity = preferences.LightStrength / 100; CartridgeDisplay.Configure(preferences.Effect,preferences.Flicker);ApplyCrtColor(); }
     private void SetSize()
@@ -459,6 +470,8 @@ public partial class WidgetWindow : Window
     private async void OpenYouTubePage(object sender, RoutedEventArgs e)
     {
         if (e.RoutedEvent != null) e.Handled = true;
+        StopPlaybackConnection();
+        CancelCartridgeInsertion();
         if (pageOpen) { ShowWidget(); return; }
         if (openingPage || closing) return;
         openingPage = true;

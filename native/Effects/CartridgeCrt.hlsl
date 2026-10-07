@@ -15,12 +15,14 @@ float4 main(float2 uv : TEXCOORD) : COLOR
     float lum=dot(rgb,float3(.299,.587,.114));
     rgb=lerp(lum.xxx,rgb,.84)*float3(1.02,1.05,.92);
     rgb=(rgb-.5)*1.14+.5;
-    float scan=.54+.46*saturate(frac(q.y*Resolution.y*.5)*3);
+    // Keep scanlines shallow and evenly spaced in screen coordinates. Warped UVs
+    // and a deep cutoff can merge into heavy dark bands on the small pack display.
+    float scanProfile=1-abs(frac(uv.y*Resolution.y*.5)-.5)*2;
+    float scan=.94+.06*scanProfile;
     float grain=frac((q.x*127.1+q.y*311.7+frac(Time*17))*.173);
     grain=frac(grain*grain*57.11)-.5;
-    rgb=rgb*lerp(1,scan,Strength)+grain*.07;
-    float roll=saturate(1-abs(frac(q.y-Time*.075)-.5)*13);
-    float shade=(1-roll*.14)*saturate(1-radius*.20);
+    rgb=rgb*lerp(1,scan,Strength)+grain*.035;
+    float shade=saturate(1-radius*.20);
     rgb*=shade*(.965+frac(Time*2.37)*.035);
     return float4(saturate(rgb)*center.a,center.a);
 }

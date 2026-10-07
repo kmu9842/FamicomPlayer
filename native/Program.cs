@@ -63,7 +63,7 @@ internal static class Program
         catch (Exception error)
         {
             File.AppendAllText(Path.Combine(DataDirectory, "error.log"), error + Environment.NewLine);
-            if (!Smoke) MessageBox.Show("위젯을 시작하지 못했습니다.\n" + error.Message, "FamicomPlayer");
+            if (!Smoke) ThemedDialog.Notify(null, "FamicomPlayer", "위젯을 시작하지 못했습니다.\n" + error.Message);
             return 1;
         }
     }

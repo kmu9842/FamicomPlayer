@@ -31,7 +31,7 @@
         </ResourceDictionary>
     </Window.Resources>
     <Border Padding="18,12,18,14" CornerRadius="12" Background="#FDE7E9EC" BorderBrush="#383D43" BorderThickness="2,2,2,6">
-        <Grid><Grid.RowDefinitions><RowDefinition Height="28"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Grid><Grid.RowDefinitions><RowDefinition Height="28"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Background="Transparent" MouseLeftButtonDown="DragHeader">
                 <Button Width="28" Height="28" Padding="0" DockPanel.Dock="Right" Click="CloseSettings" ToolTip="닫기" AutomationProperties.Name="설정 닫기"><Path Data="M1,1 L9,9 M9,1 L1,9" Width="10" Height="10" Stroke="#494949" StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/></Button>
                 <TextBlock Text="설정" FontSize="13" VerticalAlignment="Center"/>
@@ -41,11 +41,14 @@
                     <DockPanel Margin="0,0,0,7"><TextBlock x:Name="OpacityValue" DockPanel.Dock="Right"/><TextBlock Text="영상 불투명도"/></DockPanel>
                     <Slider x:Name="VideoOpacity" Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Style="{StaticResource ChromeFader}" ToolTip="0%: 투명 · 100%: 불투명" AutomationProperties.Name="영상 불투명도"/>
                     <DockPanel Margin="6,5,6,0"><TextBlock Text="불투명" DockPanel.Dock="Right" Foreground="#6F6F6F" FontSize="10"/><TextBlock Text="투명" Foreground="#6F6F6F" FontSize="10"/></DockPanel>
+                    <DockPanel Margin="0,12,0,7"><TextBlock x:Name="SizeValue" DockPanel.Dock="Right"/><TextBlock Text="전체 크기"/></DockPanel>
+                    <Slider x:Name="WidgetSize" Minimum="50" Maximum="300" SmallChange="1" LargeChange="10" Style="{StaticResource ChromeFader}" AutomationProperties.Name="전체 크기" ToolTip="모서리 드래그 또는 Ctrl + 휠로도 조절"/>
+                    <Button x:Name="ResetSize" Content="기본 크기" HorizontalAlignment="Right" MinWidth="86" Height="32" FontSize="12" Padding="10,5" Margin="0,5,0,0" AutomationProperties.Name="전체 크기를 기본 크기로 복원"/>
                     <Border Height="1" Background="#BCBCBC" Margin="0,16,0,8"/>
                     <CheckBox x:Name="PinOption" Content="항상 위에 표시"/>
                     <CheckBox x:Name="RotationOption" Content="게임팩 교체 애니메이션"/>
                     <CheckBox x:Name="EffectOption" Content="브라운관 필터"/>
-                    <CheckBox x:Name="FlickerOption" Content="게임팩 LED의 희미한 깜빡임"/><CheckBox x:Name="ClickSoundOption" Content="게임팩 삽입 소리"/><DockPanel Margin="0,10,0,5"><TextBlock x:Name="CrtValue" DockPanel.Dock="Right"/><TextBlock Text="브라운관 필터 강도"/></DockPanel><Slider x:Name="CrtStrength" Minimum="0" Maximum="100" Style="{StaticResource ChromeFader}"/><CheckBox x:Name="AmbientOption" Content="화면 가장자리 빛 반사"/>
+                    <CheckBox x:Name="FlickerOption" Content="게임팩 LED의 희미한 깜빡임"/><CheckBox x:Name="ClickSoundOption" Content="게임팩 삽입·부는 소리"/><DockPanel Margin="0,10,0,5"><TextBlock x:Name="CrtValue" DockPanel.Dock="Right"/><TextBlock Text="브라운관 필터 강도"/></DockPanel><Slider x:Name="CrtStrength" Minimum="0" Maximum="100" Style="{StaticResource ChromeFader}"/><CheckBox x:Name="AmbientOption" Content="화면 가장자리 빛 반사"/>
                     <DockPanel Margin="0,12,0,5"><TextBlock x:Name="HueValue" DockPanel.Dock="Right"/><TextBlock Text="색조"/></DockPanel>
                     <Slider x:Name="CrtHue" Minimum="-30" Maximum="30" Style="{StaticResource ChromeFader}" AutomationProperties.Name="CRT 색조"/>
                     <DockPanel Margin="0,8,0,5"><TextBlock x:Name="SaturationValue" DockPanel.Dock="Right"/><TextBlock Text="채도"/></DockPanel>
@@ -54,9 +57,6 @@
                     <Slider x:Name="CrtWarmth" Minimum="0" Maximum="40" Style="{StaticResource ChromeFader}" AutomationProperties.Name="CRT 따뜻한 색감"/>
                     <DockPanel Margin="0,12,0,7"><TextBlock x:Name="LightValue" DockPanel.Dock="Right"/><TextBlock Text="빛 퍼짐"/></DockPanel>
                     <Slider x:Name="LightStrength" Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Style="{StaticResource ChromeFader}" AutomationProperties.Name="빛 퍼짐"/>
-                    <DockPanel Margin="0,12,0,7"><TextBlock x:Name="SizeValue" DockPanel.Dock="Right"/><TextBlock Text="전체 크기"/></DockPanel>
-                    <Slider x:Name="WidgetSize" Minimum="50" Maximum="300" SmallChange="1" LargeChange="10" Style="{StaticResource ChromeFader}" AutomationProperties.Name="전체 크기" ToolTip="모서리 드래그 또는 Ctrl + 휠로도 조절"/>
-                    <Button x:Name="ResetSize" Content="기본 크기" HorizontalAlignment="Right" Height="24" Margin="0,5,0,0"/>
                     <Border Height="1" Background="#BCBCBC" Margin="0,16,0,8"/>
                     <DockPanel Margin="0,0,0,6"><Button x:Name="RefreshOutputsButton" Content="↻" DockPanel.Dock="Right" Width="28" Height="26" ToolTip="출력 장치 새로고침"/><TextBlock Text="소리 출력 장치" VerticalAlignment="Center"/></DockPanel>
                     <ComboBox x:Name="AudioOutput" Height="30" DisplayMemberPath="Name" SelectedValuePath="Id" Foreground="#FF171717" AutomationProperties.Name="소리 출력 장치" ToolTip="FamicomPlayer 소리를 출력할 스피커 또는 헤드폰"/>
@@ -73,6 +73,7 @@
                     </Grid>
                 </StackPanel>
             </ScrollViewer>
+            <TextBlock Grid.Row="2" Text="GreenGarnets" FontSize="5.333" Foreground="#8A8E93" HorizontalAlignment="Center" Margin="0,8,0,0" IsHitTestVisible="False"/>
         </Grid>
     </Border>
 </Window>
