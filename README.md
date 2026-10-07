@@ -1,12 +1,16 @@
 # FamicomPlayer
 
-패미컴과 오래된 브라운관 TV 모양의 투명 Windows 데스크톱 YouTube 위젯입니다. TurnTabler의 WPF + WebView2 재생 엔진, 로그인 브라우저, 재생목록, 자막, 오디오 출력 선택, OBS 오디오 연결 및 선택 설치형 Chrome 확장 기능을 기반으로 합니다.
+패미컴과 오래된 브라운관 TV 모양의 투명 Windows 데스크톱 YouTube 위젯입니다. 게임팩 보관함과 모음, 로그인 브라우저, 재생목록, 자막, 오디오 출력 선택 및 OBS 오디오 연결을 지원합니다.
+
+**[1.0.0 다운로드](https://github.com/kmu9842/FamicomPlayer/releases/tag/v1.0.0)** · **[한 장 사용가이드](docs/FamicomPlayer-1.0.0-guide.png)**
+
+![FamicomPlayer 1.0.0 사용가이드](docs/FamicomPlayer-1.0.0-guide.png)
 
 밝은 회색·짙은 회색의 하드웨어 테마입니다. 본체와 TV는 정면에 가까운 모습이며 영상과 CRT 효과를 유리면의 곡선과 기울기에 맞춰 합성합니다. 확대된 본체와 TV를 배치한 기본 크기는 550×375 DIP이며 전체 크기를 50–300%로 자유롭게 조절할 수 있습니다. 주소창 배경과 테두리는 투명하고, 글자와 버튼은 평소 희미하게 표시됩니다.
 
 ## 실행
 
-`release/single-file/FamicomPlayer.exe`를 실행합니다. 이미지와 .NET 런타임을 포함한 단일 실행 파일이므로 다른 파일을 함께 복사할 필요가 없습니다. Windows 10 2004 이상 / Windows 11 x64, Microsoft Edge WebView2 Runtime이 필요합니다. 소스에서 실행할 때는 `Start-FamicomPlayer.cmd` 또는 `npm.cmd start`를 사용합니다.
+[1.0.0 릴리스](https://github.com/kmu9842/FamicomPlayer/releases/tag/v1.0.0)에서 `FamicomPlayer.exe`를 다운로드해 실행합니다. ZIP에는 같은 실행 파일과 한 장짜리 PNG 사용가이드가 들어 있습니다. 이미지와 .NET 런타임을 포함한 단일 실행 파일이므로 설치 없이 사용할 수 있습니다. Windows 10 2004 이상 / Windows 11 x64, [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2)이 필요합니다. 소스에서 실행할 때는 `Start-FamicomPlayer.cmd` 또는 `npm.cmd start`를 사용합니다.
 
 ## 조작
 
@@ -50,8 +54,6 @@
 
 설정에서 출력 스피커·헤드폰을 선택할 수 있습니다. Windows 11에서는 **OBS로 소리 보내기 → OBS 연결 주소 복사**를 사용합니다. OBS 미디어 소스의 ‘로컬 파일’을 끄고 주소를 입력하고, 입력 형식은 `wav`, FFmpeg 옵션은 `ignore_length=1 analyzeduration=0 probesize=4096`으로 설정합니다. 기본 로컬 포트는 TurnTabler와 겹치지 않는 18744입니다. 영상 소리만 전달하며 팩 삽입 효과음은 시스템 기본 출력에서 재생합니다.
 
-선택 설치형 Chrome 확장은 `release/FamicomPlayer-Chrome-1.0.0.zip`입니다. 압축 해제 후 `Install.cmd`에서 FamicomPlayer EXE를 선택하고 안내에 따라 확장을 로드합니다. 앱 제작 과정에서는 사용자의 Chrome에 자동 설치하지 않습니다.
-
 ## 개발과 검증
 
 .NET 8 SDK를 사용합니다. `build.ps1`은 프로젝트 `.tools/dotnet`, 인접 TurnTabler의 `.tools/dotnet`, 시스템 SDK 순서로 찾습니다. npm 패키지 설치는 필요하지 않습니다.
@@ -61,10 +63,11 @@ npm.cmd test
 npm.cmd run test:bridge
 npm.cmd run test:desktop
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File publish.ps1 -Test
-npm.cmd run dist:chrome
 ```
 
-기본 검증은 게임팩 CRUD, 재시작 후 복원, 원본 삭제 후 커버 유지, 잘못된 링크 거부, 손상된 저장 파일 백업과 리소스를 확인합니다. 브리지 테스트는 재생목록 자동 전환·중복 요청·광고·오디오 출력 복구와 Chrome 메시지 검증을 확인합니다. 데스크톱 검증은 독립 임시 프로필에서 실제 YouTube 재생, 일시정지, 이전/다음 곡, 사용자 커버 유지, 게임팩 애니메이션, 설정, 브라우저 복귀를 확인합니다. 결과와 실제 화면은 `artifacts/native/` 및 `artifacts/single-file/`에 저장됩니다. `--startup-smoke`는 시작·보관함·설정·키보드/트레이 이벤트 경로만 확인합니다.
+기본 검증은 게임팩 CRUD, 재시작 후 복원, 원본 삭제 후 커버 유지, 잘못된 링크 거부, 손상된 저장 파일 백업과 리소스를 확인합니다. 브리지 테스트는 재생목록 자동 전환·중복 요청·광고·오디오 출력 복구를 확인합니다. 데스크톱 검증은 독립 임시 프로필에서 실제 YouTube 재생, 일시정지, 이전/다음 곡, 사용자 커버 유지, 게임팩 애니메이션, 설정, 브라우저 복귀를 확인합니다. 결과와 실제 화면은 `artifacts/native/` 및 `artifacts/single-file/`에 저장됩니다. `--startup-smoke`는 시작·보관함·설정·키보드/트레이 이벤트 경로만 확인합니다.
+
+사용가이드는 `FAMICOMPLAYER_ARTIFACTS`를 `docs/screenshots`의 절대 경로로 지정하고 실행 파일을 `--capture-guide`로 실행해 새 임시 프로필에서 실제 화면을 캡처한 뒤, `powershell.exe -STA -File scripts/create-usage-guide.ps1`로 재생성합니다. 캡처 원본은 Git에서 제외하고 완성된 PNG 한 장만 배포합니다.
 
 ## 이미지 에셋
 

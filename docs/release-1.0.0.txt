@@ -1,0 +1,22 @@
+FamicomPlayer 1.0.0
+
+패미컴과 브라운관 TV 모양의 Windows YouTube 플레이어입니다.
+
+### 다운로드
+- **FamicomPlayer-1.0.0-win-x64.zip**: 실행 파일 + 한 장짜리 PNG 사용가이드 + 실행 안내
+- **FamicomPlayer.exe**: 설치 없이 실행하는 단일 파일
+- **FamicomPlayer-1.0.0-guide.png**: 주요 화면과 조작을 정리한 사용가이드
+- **SHA256SUMS.txt**: 배포 파일 검증용 SHA-256
+
+Windows 10 2004 이상 / Windows 11 x64, Microsoft Edge WebView2 Runtime이 필요합니다. .NET 런타임과 이미지 리소스는 실행 파일에 포함되어 있습니다.
+
+### 주요 기능
+- 영상·재생목록 링크 재생, 자막, 볼륨, 이전·다음 곡
+- 게임팩 보관함과 재생목록 모음, 사용자 커버
+- 팩을 부는 소리와 삽입 효과음, 삽입 완료 후 재생
+- CRT 화면 효과, 크기 조절, 출력 장치 선택, OBS 오디오 연결
+- Google 로그인 세션 전달 및 팝업 처리 개선
+
+설정과 보관함은 %LOCALAPPDATA%\FamicomPlayerNative에 저장됩니다. 업데이트할 때는 앱을 종료하고 EXE를 교체하세요.
+
+![한 장 사용가이드](https://raw.githubusercontent.com/kmu9842/FamicomPlayer/v1.0.0/docs/FamicomPlayer-1.0.0-guide.png)

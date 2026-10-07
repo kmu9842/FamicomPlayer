@@ -17,7 +17,8 @@ internal static class Program
     internal static bool BrowserSmoke => Arguments.Contains("--browser-smoke") || Environment.GetEnvironmentVariable("FAMICOMPLAYER_BROWSER_SMOKE") == "1";
     internal static bool InteractionSmoke => Arguments.Contains("--interaction-smoke");
     internal static bool ObsSmoke => Arguments.Contains("--obs-smoke");
-    internal static bool Smoke => Arguments.Contains("--smoke") || Arguments.Contains("--startup-smoke") || BrowserSmoke || InteractionSmoke || ObsSmoke;
+    internal static bool GuideCapture => Arguments.Contains("--capture-guide");
+    internal static bool Smoke => Arguments.Contains("--smoke") || Arguments.Contains("--startup-smoke") || BrowserSmoke || InteractionSmoke || ObsSmoke || GuideCapture;
 
     [STAThread]
     public static int Main(string[] args)
@@ -32,7 +33,8 @@ internal static class Program
         }
         if (args.Length > 0 && args[0].StartsWith("chrome-extension://", StringComparison.Ordinal))
             return BrowserIntegration.RunHost(args[0]).GetAwaiter().GetResult();
-        if (Smoke) DataDirectory = Path.Combine(Path.GetTempPath(), ObsSmoke ? "FamicomPlayerNative-ObsSmoke" : InteractionSmoke ? "FamicomPlayerNative-InteractionSmoke" : BrowserSmoke ? "FamicomPlayerNative-BrowserSmoke" : "FamicomPlayerNative-Smoke");
+        if (GuideCapture) DataDirectory = Path.Combine(Path.GetTempPath(), "FamicomPlayer-Guide-" + Guid.NewGuid().ToString("N"));
+        else if (Smoke) DataDirectory = Path.Combine(Path.GetTempPath(), ObsSmoke ? "FamicomPlayerNative-ObsSmoke" : InteractionSmoke ? "FamicomPlayerNative-InteractionSmoke" : BrowserSmoke ? "FamicomPlayerNative-BrowserSmoke" : "FamicomPlayerNative-Smoke");
         Directory.CreateDirectory(DataDirectory);
         using var instance = new Mutex(true, BrowserSmoke ? "Local\\FamicomPlayerNative-BrowserSmoke" : Smoke ? "Local\\FamicomPlayerNative-Smoke" : "Local\\FamicomPlayerNative", out bool first);
         if (!first)

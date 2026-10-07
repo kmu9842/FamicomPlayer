@@ -2,6 +2,7 @@ native/bin/
 native/obj/
 release/
 artifacts/
+docs/screenshots/
 .tools/
 *.user
 native/Assets/Forge/

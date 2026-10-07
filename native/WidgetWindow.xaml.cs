@@ -129,7 +129,8 @@ public partial class WidgetWindow : Window
                 Top = Math.Clamp(Top, area.Top, Math.Max(area.Top, area.Bottom - Height));
             }
             await InitializeBrowser();
-            if (Program.Arguments.Contains("--startup-smoke")) await StartupSmokeChecks();
+            if (Program.GuideCapture) await CaptureGuideScreens();
+            else if (Program.Arguments.Contains("--startup-smoke")) await StartupSmokeChecks();
             else if (Program.ObsSmoke) await ObsSmokeChecks();
             else if (Program.InteractionSmoke) await InteractionSmokeChecks();
             else if (Program.BrowserSmoke) await BrowserSmokeChecks();
